@@ -22,17 +22,17 @@
   position: static;
   grid-column: 2;
   justify-self: center;
-  transform: translateX(8%);
+  transform: translateX(10%);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(18px, 3vw, 36px);
+  gap: clamp(20px, 3vw, 40px) !important;
   white-space: nowrap;
 }
 
 .nav-links > a {
   color: #374151;
-  font-size: 15px;
+  font-size: 16px !important;
   font-weight: 500;
   transition: color 0.2s ease;
 }
@@ -87,7 +87,7 @@
   border: 0;
   background: transparent;
   color: #374151;
-  font-size: 15px;
+  font-size: 16px !important;
   font-weight: 500;
   white-space: nowrap;
   transition: color 0.2s ease;
