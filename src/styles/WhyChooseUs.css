@@ -1,0 +1,259 @@
+
+/* ===== Why Choose Us Section ===== */
+
+.why-choose-section {
+  --why-blue: #2864f0;
+
+  position: relative;
+  overflow: hidden;
+  padding: 82px 5% 75px;
+  background-color: #fff;
+  background-image:
+    linear-gradient(rgba(40, 100, 240, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(40, 100, 240, 0.035) 1px, transparent 1px);
+  background-size: 57px 57px;
+}
+
+.why-choose-heading {
+  margin: 0 auto 66px;
+  text-align: center;
+}
+
+.why-choose-eyebrow {
+  display: block;
+  margin-bottom: 16px;
+  color: var(--why-blue);
+  font-size: 14px;
+  font-weight: 750;
+  letter-spacing: 2px;
+}
+
+.why-choose-heading h2 {
+  margin: 0 0 15px;
+  color: #111827;
+  font-size: clamp(32px, 4vw, 58px);
+  font-weight: 760;
+  line-height: 1.15;
+  letter-spacing: -1.8px;
+}
+
+.why-choose-heading h2 span {
+  color: var(--why-blue);
+}
+
+.why-choose-heading > p {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+  margin: 0;
+  color: #64748b;
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.why-choose-heading > p i {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  border-radius: 50%;
+  background: #a5bdfd;
+}
+
+/* Service cards */
+.why-choose-grid {
+  width: 100%;
+  max-width: 1440px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+  margin: 0 auto;
+}
+
+.service-card {
+  position: relative;
+  min-width: 0;
+  min-height: 265px;
+  padding: 34px 33px 28px;
+  overflow: hidden;
+  border: 1px solid #edf0f5;
+  border-radius: 20px;
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(237, 243, 255, 0.6),
+      transparent 36%
+    ),
+    #fff;
+  box-shadow: 0 3px 12px rgba(15, 23, 42, 0.025);
+  transition:
+    transform 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+  border-color: #dce6ff;
+  box-shadow: 0 15px 35px rgba(15, 23, 42, 0.07);
+}
+
+/* Gradient icon boxes */
+.service-icon {
+  width: 68px;
+  height: 68px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 27px;
+  border-radius: 15px;
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.18);
+  transition: transform 0.3s ease;
+}
+
+.service-card:hover .service-icon {
+  transform: translateY(-2px) scale(1.04);
+}
+
+.service-blue .service-icon {
+  background: linear-gradient(135deg, #4c9cff, #2163ff);
+}
+
+.service-cyan .service-icon {
+  background: linear-gradient(135deg, #00baf2, #2783ff);
+}
+
+.service-indigo .service-icon {
+  background: linear-gradient(135deg, #367dff, #6452ff);
+}
+
+.service-violet .service-icon {
+  background: linear-gradient(135deg, #7778ff, #2864f0);
+}
+
+/* Text */
+.service-card h3 {
+  margin: 0 0 11px;
+  color: #111827;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: -0.5px;
+}
+
+.service-card > p {
+  margin: 0;
+  color: #64748b;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+/* Small decorative line */
+.service-accent {
+  display: block;
+  width: 39px;
+  height: 3px;
+  margin-top: 24px;
+  border-radius: 5px;
+  background: linear-gradient(90deg, #60a5fa, #818cf8);
+  transition: width 0.3s ease;
+}
+
+.service-card:hover .service-accent {
+  width: 58px;
+}
+
+/* Laptop and tablet */
+@media (max-width: 1150px) {
+  .why-choose-section {
+    padding: 65px 4% 60px;
+  }
+
+  .why-choose-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+
+  .why-choose-heading {
+    margin-bottom: 45px;
+  }
+
+  .service-card {
+    min-height: 245px;
+    padding: 28px;
+  }
+
+  .service-icon {
+    margin-bottom: 22px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .why-choose-section {
+    padding: 48px 18px;
+    background-size: 38px 38px;
+  }
+
+  .why-choose-heading {
+    margin-bottom: 32px;
+  }
+
+  .why-choose-eyebrow {
+    margin-bottom: 12px;
+    font-size: 11px;
+    letter-spacing: 1.7px;
+  }
+
+  .why-choose-heading h2 {
+    font-size: 32px;
+    letter-spacing: -1.1px;
+  }
+
+  .why-choose-heading > p {
+    gap: 8px;
+    font-size: 13px;
+  }
+
+  .why-choose-heading > p i {
+    width: 5px;
+    height: 5px;
+    flex-basis: 5px;
+  }
+
+  .why-choose-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 15px;
+  }
+
+  .service-card {
+    min-height: auto;
+    padding: 25px;
+    border-radius: 16px;
+  }
+
+  .service-icon {
+    width: 58px;
+    height: 58px;
+    margin-bottom: 20px;
+    border-radius: 13px;
+  }
+
+  .service-icon svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .service-card h3 {
+    font-size: 18px;
+  }
+
+  .service-card > p {
+    font-size: 14px;
+    line-height: 1.65;
+  }
+
+  .service-accent {
+    margin-top: 18px;
+  }
+}
