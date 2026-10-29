@@ -1,6 +1,15 @@
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+@import "tailwindcss";
 
+@theme {
+  --color-brand: #1e6fd9;
+  --color-brand-dark: #0b2a5b;
+  --color-brand-light: #38bdf8;
+  --color-ink: #050b1f;
+  --font-display: "Bricolage Grotesque", sans-serif;
+  --font-sans: "DM Sans", sans-serif;
+}
 :root {
   font-family: "Inter", sans-serif;
   color: #111827;

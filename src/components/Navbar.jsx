@@ -12,11 +12,11 @@ export default function Navbar() {
   const [categoriesOpen, setCategoriesOpen] = useState(false);
 
   const navLinks = [
-    ["Home", "#home"],
-    ["All Products", "#products"],
-    ["Repairing", "#repairing"],
-    ["Track Order", "#track-order"],
-    ["About Us", "#about"],
+    ["Home", "/"],
+    ["All Products", "/products"],
+    ["Repairing", "/repairing"],
+    ["Track Order", "/track-order"],
+    ["About Us", "/about"],
   ];
 
   const categoryLinks = [
