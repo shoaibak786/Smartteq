@@ -8,7 +8,7 @@ import {
 
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
-import "../styles/N~avbar.css";
+import "../styles/Navbar.css";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
