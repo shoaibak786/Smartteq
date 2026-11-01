@@ -1,0 +1,377 @@
+/* ===== Why Choose Us Section ===== */
+
+.why-choose-section {
+  --why-blue: #2864f0;
+
+  position: relative;
+  overflow: hidden;
+  padding: 82px 5% 75px;
+  background-color: #fff;
+  background-image:
+    linear-gradient(rgba(40, 100, 240, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(40, 100, 240, 0.035) 1px, transparent 1px);
+  background-size: 57px 57px;
+}
+
+.why-choose-heading {
+  margin: 0 auto 66px;
+  text-align: center;
+}
+
+.why-choose-eyebrow {
+  display: block;
+  margin-bottom: 16px;
+  color: var(--why-blue);
+  font-size: 14px;
+  font-weight: 750;
+  letter-spacing: 2px;
+}
+
+.why-choose-heading h2 {
+  margin: 0 0 15px;
+  color: #111827;
+  font-size: clamp(32px, 4vw, 58px);
+  font-weight: 760;
+  line-height: 1.15;
+  letter-spacing: -1.8px;
+  text-wrap: balance;
+}
+
+.why-choose-heading h2 span {
+  color: var(--why-blue);
+}
+
+.why-choose-heading > p {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+  margin: 0;
+  color: #64748b;
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.why-choose-heading > p i {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  border-radius: 50%;
+  background: #a5bdfd;
+}
+
+/* Service cards */
+.why-choose-grid {
+  width: 100%;
+  max-width: 1440px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+  margin: 0 auto;
+}
+
+.service-card {
+  position: relative;
+  min-width: 0;
+  min-height: 265px;
+  padding: 34px 33px 28px;
+  overflow: hidden;
+  border: 1px solid #edf0f5;
+  border-radius: 20px;
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(237, 243, 255, 0.6),
+      transparent 36%
+    ),
+    #fff;
+  box-shadow: 0 3px 12px rgba(15, 23, 42, 0.025);
+  transition:
+    transform 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+/* Gradient icon boxes */
+.service-icon {
+  width: 68px;
+  height: 68px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 27px;
+  border-radius: 15px;
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.18);
+  transition: transform 0.3s ease;
+}
+
+.service-blue .service-icon {
+  background: linear-gradient(135deg, #4c9cff, #2163ff);
+}
+
+.service-cyan .service-icon {
+  background: linear-gradient(135deg, #00baf2, #2783ff);
+}
+
+.service-indigo .service-icon {
+  background: linear-gradient(135deg, #367dff, #6452ff);
+}
+
+.service-violet .service-icon {
+  background: linear-gradient(135deg, #7778ff, #2864f0);
+}
+
+/* Text */
+.service-card h3 {
+  margin: 0 0 11px;
+  color: #111827;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: -0.5px;
+}
+
+.service-card > p {
+  margin: 0;
+  color: #64748b;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+/* Small decorative line */
+.service-accent {
+  display: block;
+  width: 39px;
+  height: 3px;
+  margin-top: 24px;
+  border-radius: 5px;
+  background: linear-gradient(90deg, #60a5fa, #818cf8);
+  transition: width 0.3s ease;
+}
+
+/* Hover effects sirf mouse wali devices par
+   (touch par hover "chipak" jata tha) */
+@media (hover: hover) {
+  .service-card:hover {
+    transform: translateY(-5px);
+    border-color: #dce6ff;
+    box-shadow: 0 15px 35px rgba(15, 23, 42, 0.07);
+  }
+
+  .service-card:hover .service-icon {
+    transform: translateY(-2px) scale(1.04);
+  }
+
+  .service-card:hover .service-accent {
+    width: 58px;
+  }
+}
+
+/* Chhoti desktop: 4 cards mein text tang na ho */
+@media (max-width: 1350px) {
+  .why-choose-grid {
+    gap: 20px;
+  }
+
+  .service-card {
+    padding: 30px 26px 26px;
+  }
+
+  .service-icon {
+    width: 62px;
+    height: 62px;
+    margin-bottom: 22px;
+  }
+
+  .service-card h3 {
+    font-size: 19px;
+  }
+
+  .service-card > p {
+    font-size: 15px;
+  }
+}
+
+/* =========================================
+   TABLET (601px - 1150px)
+   2 x 2 cards, bada heading, barabar spacing
+========================================= */
+@media (max-width: 1150px) {
+  .why-choose-section {
+    padding: 65px 4% 60px;
+  }
+
+  .why-choose-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+  }
+
+  .why-choose-heading {
+    margin-bottom: 45px;
+  }
+
+  /* Tablet par heading thoda bada */
+  .why-choose-heading h2 {
+    font-size: clamp(34px, 4.8vw, 50px);
+    letter-spacing: -1.5px;
+  }
+
+  .why-choose-heading > p {
+    font-size: 17px;
+  }
+
+  .service-card {
+    min-height: 245px;
+    padding: 30px;
+  }
+
+  .service-icon {
+    width: 68px;
+    height: 68px;
+    margin-bottom: 22px;
+  }
+
+  .service-card h3 {
+    font-size: 21px;
+  }
+
+  .service-card > p {
+    font-size: 16px;
+  }
+}
+
+/* Chhote tablets (601px - 760px): dots hata do, text center mein wrap ho */
+@media (min-width: 601px) and (max-width: 760px) {
+  .why-choose-heading > p {
+    display: block;
+    padding: 0 8px;
+    text-wrap: balance;
+  }
+
+  .why-choose-heading > p i {
+    display: none;
+  }
+
+  .service-card {
+    padding: 26px 24px;
+  }
+}
+
+/* =========================================
+   MOBILE (600px aur neeche)
+========================================= */
+@media (max-width: 600px) {
+  .why-choose-section {
+    padding: 48px 20px;
+    background-size: 38px 38px;
+  }
+
+  .why-choose-heading {
+    margin-bottom: 28px;
+  }
+
+  .why-choose-eyebrow {
+    margin-bottom: 12px;
+    font-size: 12px;
+    letter-spacing: 1.7px;
+  }
+
+  .why-choose-heading h2 {
+    font-size: 32px;
+    letter-spacing: -1.1px;
+  }
+
+  /* Dots hata do, text center mein sahi wrap ho */
+  .why-choose-heading > p {
+    display: block;
+    padding: 0 4px;
+    font-size: 14.5px;
+    text-wrap: balance;
+  }
+
+  .why-choose-heading > p i {
+    display: none;
+  }
+
+  .why-choose-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+  }
+
+  /* Compact horizontal card: icon left, text right */
+  .service-card {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: 18px;
+    align-items: start;
+    min-height: auto;
+    padding: 22px 20px;
+    border-radius: 16px;
+  }
+
+  .service-icon {
+    grid-column: 1;
+    grid-row: 1 / span 3;
+    width: 56px;
+    height: 56px;
+    margin-bottom: 0;
+    border-radius: 13px;
+  }
+
+  .service-icon svg {
+    width: 26px;
+    height: 26px;
+  }
+
+  .service-card h3 {
+    grid-column: 2;
+    margin: 2px 0 8px;
+    font-size: 18px;
+  }
+
+  .service-card > p {
+    grid-column: 2;
+    font-size: 14.5px;
+    line-height: 1.65;
+  }
+
+  .service-accent {
+    grid-column: 2;
+    margin-top: 14px;
+  }
+}
+
+/* Chhote phones (320–380px) */
+@media (max-width: 380px) {
+  .why-choose-section {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .why-choose-heading h2 {
+    font-size: 28px;
+  }
+
+  .service-card {
+    column-gap: 14px;
+    padding: 20px 16px;
+  }
+
+  .service-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .service-icon svg {
+    width: 23px;
+    height: 23px;
+  }
+
+  .service-card h3 {
+    font-size: 17px;
+  }
+
+  .service-card > p {
+    font-size: 14px;
+  }
+}

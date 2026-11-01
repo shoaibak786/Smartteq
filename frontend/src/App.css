@@ -1,0 +1,319 @@
+/* =========================================
+   SMARTTEQ APP.CSS — HERO SLIDER
+   (Navbar ki styling ab sirf styles/navbar.css mein hai)
+========================================= */
+
+/* =========================================
+   HERO SLIDER — THEME COLORS
+========================================= */
+
+/* Slide-specific theme colors */
+.hero {
+  --slide-color: #06b6d4;
+}
+
+.hero-progress span {
+  background: var(--slide-color);
+}
+
+.hero:has(.visual-0) {
+  --slide-color: #06b6d4;
+}
+
+.hero:has(.visual-1) {
+  --slide-color: #8b5cf6;
+}
+
+.hero:has(.visual-2) {
+  --slide-color: #f59e0b;
+}
+
+/* Match buttons and highlights to current slide */
+.hero-button {
+  background: var(--slide-color);
+}
+
+.hero-eyebrow,
+.hero-title > span {
+  color: var(--slide-color);
+}
+
+.title-underline {
+  background: var(--slide-color);
+}
+
+
+/* Dynamic color for each hero slide */
+.hero.theme-0 {
+  --slide-color: #06b6d4;
+}
+
+.hero.theme-1 {
+  --slide-color: #a855f7;
+}
+
+.hero.theme-2 {
+  --slide-color: #f59e0b;
+}
+
+/* Progress bar */
+.hero-progress span {
+  background: var(--slide-color) !important;
+}
+
+/* Slide content colors */
+.hero .hero-eyebrow,
+.hero .hero-title span {
+  color: var(--slide-color);
+}
+
+.hero .title-underline {
+  background: var(--slide-color);
+}
+
+.hero .hero-button {
+  background: var(--slide-color);
+  border-color: var(--slide-color);
+}
+
+/* Slider arrows — dynamic theme */
+.slider-arrow {
+  color: var(--slide-color);
+  border-color: var(--slide-color);
+  transition: all 0.3s ease;
+}
+
+.slider-arrow:hover {
+  background: var(--slide-color);
+  color: #fff;
+  border-color: var(--slide-color);
+}
+
+/* Slider dots */
+.slider-dot {
+  background: transparent;
+  border: 2px solid var(--slide-color);
+  transition: all 0.3s ease;
+}
+
+/* Active dot */
+.slider-dot.active {
+  background: var(--slide-color);
+  border-color: var(--slide-color);
+  transform: scale(1.15);
+}
+
+/* Dot hover */
+.slider-dot:hover {
+  background: var(--slide-color);
+  border-color: var(--slide-color);
+}
+
+/* Smooth theme transition */
+.slider-controls button {
+  transition:
+    background 0.3s ease,
+    color 0.3s ease,
+    border-color 0.3s ease,
+    transform 0.3s ease;
+}
+
+/* Hero feature dots — match current slide theme */
+.hero .hero-points span i {
+  background-color: var(--slide-color) !important;
+  transition: background-color 0.3s ease;
+}
+
+
+/* ===== Premium Hero Slider Controls ===== */
+
+.hero .slider-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+}
+
+/* Minimal, premium arrow buttons */
+.hero .slider-arrow {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+
+  color: #334155;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid #e2e8f0;
+  border-radius: 50%;
+
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+  cursor: pointer;
+
+  transition:
+    color 0.25s ease,
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
+}
+
+.hero .slider-arrow:hover {
+  color: #fff;
+  background: var(--slide-color);
+  border-color: var(--slide-color);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.10);
+}
+
+.hero .slider-arrow:active {
+  transform: scale(0.96);
+}
+
+/* Clean dot navigation */
+.hero .slider-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Inactive dots */
+.hero .slider-dot {
+  position: relative;
+  appearance: none;
+  width: 7px;
+  height: 7px;
+  min-width: 7px;
+  padding: 0;
+
+  background: #cbd5e1;
+  border: none;
+  border-radius: 99px;
+
+  cursor: pointer;
+  transition:
+    width 0.3s ease,
+    background-color 0.3s ease,
+    opacity 0.3s ease;
+}
+
+/* Dots ka tap area bara (touch ke liye) */
+.hero .slider-dot::after {
+  content: "";
+  position: absolute;
+  inset: -12px -3px;
+}
+
+/* Active dot */
+.hero .slider-dot.active {
+  width: 25px;
+  background: var(--slide-color);
+}
+
+/* Subtle hover for inactive dots */
+.hero .slider-dot:not(.active):hover {
+  background: #94a3b8;
+}
+
+/* Accessible keyboard focus */
+.hero .slider-arrow:focus-visible,
+.hero .slider-dot:focus-visible {
+  outline: 2px solid var(--slide-color);
+  outline-offset: 4px;
+}
+
+/* Smooth color changes between slides */
+.hero .slider-arrow,
+.hero .slider-dot {
+  transition-duration: 0.3s;
+}
+
+/* Mobile responsive controls */
+@media (max-width: 600px) {
+  .hero .slider-controls {
+    gap: 16px;
+  }
+
+  .hero .slider-arrow {
+    width: 40px;
+    height: 40px;
+  }
+
+  .hero .slider-dots {
+    gap: 7px;
+  }
+
+  .hero .slider-dot {
+    width: 6px;
+    height: 6px;
+    min-width: 6px;
+  }
+
+  .hero .slider-dot.active {
+    width: 21px;
+  }
+}
+
+
+/* =========================================
+   HERO — RESPONSIVE FIXES
+========================================= */
+
+.hero-content {
+  min-width: 0;
+}
+
+/* Choti text ko readable banao */
+.hero-eyebrow {
+  font-size: 12px;
+}
+
+.hero-points span {
+  font-size: 12px;
+}
+
+.floating-chip small,
+.code-top small {
+  font-size: 10px;
+}
+
+/* Tablet: hero single column */
+@media (max-width: 900px) {
+  .hero {
+    min-height: auto;
+  }
+
+  .hero-inner {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 55px 7% 35px;
+  }
+
+  .hero-content {
+    max-width: 100%;
+  }
+
+  .hero-description {
+    max-width: 480px;
+    font-size: 14px;
+  }
+
+  .hero-visual {
+    width: 100%;
+    max-width: 560px;
+    min-height: 340px;
+    margin: 5px auto 0;
+    transform: none;
+  }
+}
+
+/* Chhote phones */
+@media (max-width: 480px) {
+  .hero-button {
+    width: 100%; /* full width button; pasand na aaye to ye rule hata do */
+  }
+
+  .hero-description {
+    max-width: 100%;
+  }
+}

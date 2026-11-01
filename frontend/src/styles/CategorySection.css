@@ -1,0 +1,369 @@
+/* ===== Category Section ===== */
+
+.categories-section {
+  --category-blue: #2864f0;
+
+  position: relative;
+  overflow: hidden;
+  padding: 65px 4.7% 75px;
+  background-color: #fff;
+  background-image:
+    linear-gradient(rgba(40, 100, 240, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(40, 100, 240, 0.035) 1px, transparent 1px);
+  background-size: 57px 57px;
+}
+
+.categories-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 28px;
+  margin-bottom: 48px;
+}
+
+.categories-heading {
+  min-width: 0;
+}
+
+.categories-eyebrow {
+  display: block;
+  margin-bottom: 17px;
+  color: var(--category-blue);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.categories-heading h2 {
+  margin: 0 0 13px;
+  color: #111827;
+  font-size: clamp(32px, 3.7vw, 58px);
+  font-weight: 750;
+  line-height: 1.12;
+  letter-spacing: -2px;
+}
+
+.categories-heading h2 span {
+  color: var(--category-blue);
+}
+
+.categories-heading p {
+  margin: 0;
+  color: #64748b;
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.categories-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+  padding-bottom: 2px;
+}
+
+.category-arrow {
+  width: 49px;
+  height: 49px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid #e5e7eb;
+  border-radius: 50%;
+  color: var(--category-blue);
+  background: #f9fafb;
+  cursor: pointer;
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.category-arrow-next {
+  background: #fff;
+}
+
+.view-all-button {
+  min-height: 49px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 24px;
+  border-radius: 28px;
+  color: #fff;
+  background: linear-gradient(110deg, #165dff, #347cf7);
+  box-shadow: 0 5px 12px rgba(40, 100, 240, 0.22);
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+/* Hover effects sirf mouse wali devices par
+   (touch par hover "chipak" jata tha) */
+@media (hover: hover) {
+  .category-arrow:hover {
+    color: #fff;
+    background: var(--category-blue);
+    border-color: var(--category-blue);
+    transform: translateY(-2px);
+  }
+
+  .view-all-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(40, 100, 240, 0.28);
+  }
+
+  .category-card:hover .category-image-circle {
+    transform: translateY(-5px);
+    border-color: var(--category-blue);
+    box-shadow: 0 8px 22px rgba(40, 100, 240, 0.14);
+  }
+
+  .category-card:hover .category-image-circle img {
+    transform: scale(1.06);
+  }
+}
+
+/* Keyboard focus */
+.category-arrow:focus-visible,
+.view-all-button:focus-visible,
+.category-card:focus-visible {
+  outline: 2px solid var(--category-blue);
+  outline-offset: 4px;
+}
+
+/* Horizontal category cards */
+.categories-track {
+  display: grid;
+  grid-auto-columns: minmax(150px, 1fr);
+  grid-auto-flow: column;
+  gap: 30px;
+  overflow-x: auto;
+  /* Upar aur side ka padding: hover par card/shadow kat'te nahi */
+  padding: 10px 4px 18px;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 4px;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.categories-track::-webkit-scrollbar {
+  display: none;
+}
+
+.category-card {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 15px;
+  color: #374151;
+  text-decoration: none;
+  scroll-snap-align: start;
+}
+
+.category-image-circle {
+  width: clamp(145px, 12vw, 174px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid #d1d5f0;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.12);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.category-image-circle img {
+  display: block;
+  width: 76%;
+  height: 76%;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.category-name {
+  max-width: 100%;
+  color: #374151;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+/* =========================================
+   TABLET (601px - 1100px)
+   Header ek row mein (heading left, buttons right),
+   cards screen ke hisaab se barabar bantein (4 cards)
+========================================= */
+@media (min-width: 601px) and (max-width: 1100px) {
+  .categories-section {
+    padding: 50px 4% 60px;
+  }
+
+  .categories-header {
+    align-items: flex-end;
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+
+  .categories-heading {
+    flex: 1;
+  }
+
+  .categories-heading h2 {
+    font-size: clamp(30px, 4.4vw, 42px);
+    letter-spacing: -1.5px;
+  }
+
+  .categories-heading p {
+    max-width: 480px;
+    font-size: 16px;
+  }
+
+  .categories-desktop-break {
+    display: none;
+  }
+
+  .categories-actions {
+    gap: 10px;
+  }
+
+  .category-arrow {
+    width: 44px;
+    height: 44px;
+  }
+
+  .view-all-button {
+    min-height: 44px;
+    padding: 0 20px;
+    font-size: 14px;
+  }
+
+  /* 4 cards ek screen mein, baqi swipe/arrows se */
+  .categories-track {
+    grid-auto-columns: calc((100% - 66px) / 4);
+    gap: 22px;
+  }
+
+  .category-image-circle {
+    width: min(100%, 170px);
+  }
+
+  .category-name {
+    font-size: 14px;
+  }
+}
+
+/* Chhote tablets (601px - 800px): 3 cards */
+@media (min-width: 601px) and (max-width: 800px) {
+  .categories-track {
+    grid-auto-columns: calc((100% - 44px) / 3);
+  }
+}
+
+/* =========================================
+   MOBILE (600px aur neeche)
+========================================= */
+@media (max-width: 600px) {
+  .categories-section {
+    padding: 42px 20px 48px;
+    background-size: 38px 38px;
+  }
+
+  .categories-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 22px;
+    margin-bottom: 22px;
+  }
+
+  .categories-desktop-break {
+    display: none;
+  }
+
+  .categories-eyebrow {
+    margin-bottom: 12px;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+  }
+
+  .categories-heading h2 {
+    font-size: 35px;
+    letter-spacing: -1.3px;
+  }
+
+  .categories-heading p {
+    font-size: 15px;
+  }
+
+  .categories-actions {
+    align-self: flex-start;
+    gap: 9px;
+  }
+
+  .category-arrow {
+    width: 44px;
+    height: 44px;
+  }
+
+  .view-all-button {
+    min-height: 44px;
+    padding: 0 16px;
+    font-size: 13px;
+  }
+
+  /* Cards screen ke kinare tak scroll hon (app jaisa feel) */
+  .categories-track {
+    grid-auto-columns: 135px;
+    gap: 17px;
+    margin: 0 -20px;
+    padding: 10px 20px 18px;
+    scroll-padding-inline: 20px;
+  }
+
+  .category-image-circle {
+    width: 130px;
+  }
+
+  .category-name {
+    font-size: 13px;
+  }
+}
+
+/* Chhote phones (320–380px) */
+@media (max-width: 380px) {
+  .categories-section {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .categories-heading h2 {
+    font-size: 30px;
+  }
+
+  .categories-track {
+    grid-auto-columns: 120px;
+    gap: 14px;
+    margin: 0 -16px;
+    padding-right: 16px;
+    padding-left: 16px;
+    scroll-padding-inline: 16px;
+  }
+
+  .category-image-circle {
+    width: 115px;
+  }
+}

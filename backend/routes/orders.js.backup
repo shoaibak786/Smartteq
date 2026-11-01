@@ -1,0 +1,262 @@
+
+import express from "express";
+import crypto from "crypto";
+import db from "../config/db.js";
+
+const router = express.Router();
+
+
+// =====================================
+// SECURE ORDER TRACKING API
+// =====================================
+
+
+router.get("/track/:token", async (req, res) => {
+  let connection;
+
+  try {
+    const { token } = req.params;
+
+    if (!/^[a-f0-9]{64}$/i.test(token)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid tracking link.",
+      });
+    }
+
+    const trackingTokenHash = crypto
+      .createHash("sha256")
+      .update(token)
+      .digest("hex");
+
+    connection = await db.getConnection();
+
+    const [orders] = await connection.execute(
+      `SELECT
+        order_id,
+        customer_name,
+        payment_method,
+        status,
+        total
+       FROM orders
+       WHERE tracking_token_hash = ?
+       LIMIT 1`,
+      [trackingTokenHash]
+    );
+
+    if (orders.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found or tracking link is invalid.",
+      });
+    }
+
+    const order = orders[0];
+
+    const [items] = await connection.execute(
+      `SELECT
+        product_id,
+        product_name,
+        price,
+        quantity
+       FROM order_items
+       WHERE order_id = ?`,
+      [order.order_id]
+    );
+
+    return res.status(200).json({
+      success: true,
+      order: {
+        orderId: order.order_id,
+        status: order.status,
+        total: Number(order.total),
+        paymentMethod: order.payment_method,
+        customer: {
+          fullName: order.customer_name,
+        },
+        items: items.map((item) => ({
+          id: item.product_id,
+          name: item.product_name,
+          price: Number(item.price),
+          quantity: Number(item.quantity),
+        })),
+      },
+    });
+
+  } catch (error) {
+    console.error("Order tracking error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Unable to track your order.",
+    });
+
+  } finally {
+    connection?.release();
+  }
+});
+
+
+router.post("/", async (req, res) => {
+  let connection;
+  let transactionStarted = false;
+
+  try {
+    const { customer, items, paymentMethod } = req.body;
+
+    // Validate customer details
+    if (
+      !customer?.fullName?.trim() ||
+      !customer?.phone?.trim() ||
+      !customer?.address?.trim() ||
+      !customer?.city?.trim()
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide all required customer details.",
+      });
+    }
+
+    if (!Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Your order must contain at least one product.",
+      });
+    }
+
+    // Validate order items
+    for (const item of items) {
+      if (
+        !item.id ||
+        !item.name ||
+        !Number.isFinite(Number(item.price)) ||
+        Number(item.price) < 0 ||
+        !Number.isInteger(Number(item.quantity)) ||
+        Number(item.quantity) < 1
+      ) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid product information in your order.",
+        });
+      }
+    }
+
+    // Calculate subtotal
+    const subtotal = items.reduce(
+      (sum, item) =>
+        sum + Number(item.price) * Number(item.quantity),
+      0
+    );
+
+    // Generate Order ID
+    const orderId = `STQ-${crypto
+      .randomBytes(4)
+      .toString("hex")
+      .toUpperCase()}`;
+
+    // Generate secure tracking token
+    const trackingToken = crypto.randomBytes(32).toString("hex");
+
+    // Store only SHA-256 hash in database
+    const trackingTokenHash = crypto
+      .createHash("sha256")
+      .update(trackingToken)
+      .digest("hex");
+
+    connection = await db.getConnection();
+
+    await connection.beginTransaction();
+    transactionStarted = true;
+
+    // Save order
+    await connection.execute(
+      `INSERT INTO orders (
+        order_id,
+        customer_name,
+        phone,
+        email,
+        address,
+        area,
+        city,
+        postal_code,
+        notes,
+        subtotal,
+        shipping,
+        total,
+        payment_method,
+        status,
+        tracking_token_hash
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        orderId,
+        customer.fullName.trim(),
+        customer.phone.trim(),
+        customer.email?.trim() || null,
+        customer.address.trim(),
+        customer.area?.trim() || null,
+        customer.city.trim(),
+        customer.postalCode?.trim() || null,
+        customer.notes?.trim() || null,
+        subtotal,
+        0,
+        subtotal,
+        paymentMethod || "Cash on Delivery",
+        "Pending",
+        trackingTokenHash,
+      ]
+    );
+
+    // Save order items
+    for (const item of items) {
+      await connection.execute(
+        `INSERT INTO order_items (
+          order_id,
+          product_id,
+          product_name,
+          price,
+          quantity
+        ) VALUES (?, ?, ?, ?, ?)`,
+        [
+          orderId,
+          String(item.id),
+          item.name,
+          Number(item.price),
+          Number(item.quantity),
+        ]
+      );
+    }
+
+    await connection.commit();
+    transactionStarted = false;
+
+    // Send secure token to customer once
+    res.status(201).json({
+      success: true,
+      message: "Your order has been placed successfully!",
+      order: {
+        orderId,
+        subtotal,
+        total: subtotal,
+        status: "Pending",
+        trackingToken,
+      },
+    });
+
+  } catch (error) {
+    if (connection && transactionStarted) {
+      await connection.rollback();
+    }
+
+    console.error("Place order error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Unable to place your order. Please try again.",
+    });
+
+  } finally {
+    connection?.release();
+  }
+});
+
+export default router;

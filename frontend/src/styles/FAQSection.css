@@ -1,0 +1,299 @@
+/* ===== Frequently Asked Questions ===== */
+
+.faq-section {
+  padding: 50px 4.2% 72px;
+  background: #f8f9fb;
+  color: #111827;
+}
+
+.faq-heading {
+  text-align: center;
+  margin: 0 auto 72px;
+}
+
+.faq-heading h2 {
+  margin: 0 0 20px;
+  color: #111827;
+  font-size: clamp(34px, 4.3vw, 54px);
+  font-weight: 750;
+  line-height: 1.2;
+  letter-spacing: -1.8px;
+  text-wrap: balance;
+}
+
+.faq-heading > p {
+  margin: 0;
+  color: #334155;
+  font-size: 21px;
+  line-height: 1.6;
+}
+
+.faq-heading-accent {
+  display: block;
+  width: 108px;
+  height: 4px;
+  margin: 25px auto 0;
+  border-radius: 5px;
+  background: linear-gradient(90deg, #367cff, #a43cff);
+}
+
+.faq-list {
+  width: 100%;
+  max-width: 950px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.faq-item {
+  overflow: hidden;
+  border: 1px solid #e9edf5;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 3px 8px rgba(15, 23, 42, 0.055);
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.faq-item-open {
+  border-color: #e1e8ff;
+}
+
+/* Question */
+.faq-question {
+  width: 100%;
+  min-height: 67px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 19px 27px;
+  border: none;
+  background: transparent;
+  color: #172033;
+  text-align: left;
+  font: inherit;
+  font-size: 20px;
+  font-weight: 650;
+  line-height: 1.45;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    color 0.3s ease,
+    background-color 0.3s ease;
+}
+
+.faq-question > span {
+  min-width: 0;
+}
+
+.faq-item-open .faq-question {
+  color: #2864f0;
+  background-color: #fbfcff;
+}
+
+/* Arrow */
+.faq-chevron {
+  flex-shrink: 0;
+  color: #667085;
+  transition:
+    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    color 0.3s ease;
+}
+
+.faq-chevron-open {
+  transform: rotate(180deg);
+  color: #2864f0;
+}
+
+/* Answer: smooth expand / collapse.
+   Band hone par visibility:hidden se tab-focus aur screen reader
+   dono se chhup jata hai (animation ke baad). */
+.faq-answer-wrapper {
+  display: grid;
+  grid-template-rows: 0fr;
+  padding: 0 27px;
+  visibility: hidden;
+  opacity: 0;
+  transition:
+    grid-template-rows 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.25s ease,
+    padding-bottom 0.4s ease,
+    visibility 0s linear 0.4s;
+}
+
+.faq-answer-wrapper.answer-open {
+  grid-template-rows: 1fr;
+  padding-bottom: 22px;
+  visibility: visible;
+  opacity: 1;
+  transition:
+    grid-template-rows 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.25s ease,
+    padding-bottom 0.4s ease,
+    visibility 0s;
+}
+
+.faq-answer-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.faq-answer {
+  max-width: 950px;
+  margin: 0;
+  padding-top: 2px;
+  color: #64748b;
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+/* Hover effects sirf mouse wali devices par
+   (touch par hover "chipak" jata tha) */
+@media (hover: hover) {
+  .faq-item:hover {
+    border-color: #c8d8ff;
+    box-shadow: 0 7px 18px rgba(37, 99, 235, 0.09);
+  }
+
+  .faq-question:hover {
+    color: #2864f0;
+    background-color: #f8faff;
+  }
+}
+
+/* Keyboard accessibility */
+.faq-question:focus-visible {
+  outline: 2px solid #2864f0;
+  outline-offset: -3px;
+  border-radius: 12px;
+}
+
+/* Tablet */
+@media (max-width: 768px) {
+  .faq-section {
+    padding: 45px 24px 58px;
+  }
+
+  .faq-heading {
+    margin-bottom: 45px;
+  }
+
+  .faq-heading h2 {
+    font-size: 38px;
+    letter-spacing: -1px;
+  }
+
+  .faq-heading > p {
+    font-size: 17px;
+  }
+
+  .faq-list {
+    max-width: 100%;
+    gap: 14px;
+  }
+
+  .faq-question {
+    min-height: 65px;
+    padding: 17px 20px;
+    font-size: 17px;
+  }
+
+  .faq-answer-wrapper {
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+
+  .faq-answer-wrapper.answer-open {
+    padding-bottom: 20px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .faq-section {
+    padding: 38px 16px 45px;
+  }
+
+  .faq-heading {
+    margin-bottom: 35px;
+  }
+
+  .faq-heading h2 {
+    font-size: 31px;
+    letter-spacing: -0.8px;
+  }
+
+  .faq-heading > p {
+    font-size: 15px;
+  }
+
+  .faq-heading-accent {
+    margin-top: 20px;
+  }
+
+  .faq-item {
+    border-radius: 12px;
+  }
+
+  .faq-question {
+    min-height: 62px;
+    gap: 12px;
+    padding: 16px;
+    font-size: 15px;
+  }
+
+  .faq-chevron {
+    width: 20px;
+    height: 20px;
+  }
+
+  .faq-answer-wrapper {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .faq-answer-wrapper.answer-open {
+    padding-bottom: 18px;
+  }
+
+  .faq-answer {
+    font-size: 14.5px;
+    line-height: 1.7;
+  }
+}
+
+/* Chhote phones (320–380px) */
+@media (max-width: 380px) {
+  .faq-section {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .faq-heading h2 {
+    font-size: 28px;
+  }
+
+  .faq-question {
+    padding: 14px;
+    font-size: 14.5px;
+  }
+
+  .faq-answer-wrapper {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .faq-item,
+  .faq-question,
+  .faq-chevron,
+  .faq-answer-wrapper,
+  .faq-answer-wrapper.answer-open {
+    transition: none;
+  }
+}

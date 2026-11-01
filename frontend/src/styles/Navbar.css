@@ -1,0 +1,642 @@
+/* =========================================
+   NAVBAR.CSS
+   Navbar ki saari styling yahin hai
+   (App.css / index.css mein navbar ka kuch nahi)
+   Desktop + Tablet (761px+): poore links | Mobile (760px aur neeche): hamburger
+========================================= */
+
+/* ---------- STICKY HEADER ---------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  padding: 20px 2.2% 8px;
+  background: #ffffff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+}
+
+/* ---------- NAVBAR BAR ---------- */
+.navbar {
+  position: relative; /* mobile menu isi ke hisaab se align hoga */
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-height: 70px;
+  max-width: 1500px;
+  margin: auto;
+  padding: 10px 22px;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid #eef0f5;
+  border-radius: 25px;
+  box-shadow: 0 8px 22px #0f172a12;
+}
+
+/* ---------- BRAND ---------- */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  min-width: 0;
+}
+
+.brand-logo {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  overflow: hidden;
+  border-radius: 13px;
+  background: #fff;
+  border: 1px solid #e8edf5;
+  box-shadow: 0 2px 8px #0f172a0a;
+}
+
+.brand-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.brand-fallback {
+  position: absolute;
+  z-index: 0;
+  color: var(--blue);
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.brand-logo img:not([src=""]) {
+  position: relative;
+  z-index: 1;
+}
+
+.brand-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.brand-copy strong {
+  font-size: 18px;
+  letter-spacing: -0.6px;
+}
+
+.brand-copy small {
+  font-size: 10px;
+  color: var(--muted);
+}
+
+/* ---------- DESKTOP LINKS ---------- */
+.nav-links {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(14px, 1.8vw, 34px);
+  white-space: nowrap;
+}
+
+.nav-links > a {
+  color: #374151;
+  font-size: 15px;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.nav-links > a:hover {
+  color: var(--blue);
+}
+
+/* ---------- CATEGORIES DROPDOWN ---------- */
+.nav-dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.nav-dropdown-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 8px 0;
+  border: 0;
+  background: transparent;
+  color: #374151;
+  font-size: 15px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.nav-dropdown-toggle:hover,
+.nav-dropdown.dropdown-open .nav-dropdown-toggle {
+  color: var(--blue);
+}
+
+.dropdown-chevron {
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.dropdown-chevron.chevron-rotated {
+  transform: rotate(180deg);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 50%;
+  z-index: 100;
+  display: none;
+  width: 225px;
+  padding: 8px;
+  transform: translateX(-50%);
+  background: #fff;
+  border: 1px solid #e8edf5;
+  border-radius: 14px;
+  box-shadow: 0 18px 40px #0f172a18;
+}
+
+/* Hover gap bridge (mouse le jate waqt menu band na ho) */
+.dropdown-menu::before {
+  content: "";
+  position: absolute;
+  top: -14px;
+  left: 0;
+  right: 0;
+  height: 14px;
+}
+
+.nav-dropdown:hover .dropdown-menu,
+.nav-dropdown:focus-within .dropdown-menu,
+.nav-dropdown.dropdown-open .dropdown-menu {
+  display: block;
+}
+
+.dropdown-menu a {
+  display: block;
+  padding: 12px 13px;
+  border-radius: 9px;
+  color: #475569;
+  font-size: 13px;
+  line-height: 1.4;
+  white-space: normal;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.dropdown-menu a:hover {
+  color: var(--blue);
+  background: #eff6ff;
+}
+
+/* Loading / empty message */
+.dropdown-menu > span {
+  display: block;
+  padding: 12px 13px;
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+/* ---------- CART ---------- */
+.nav-cart {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  gap: 9px;
+  margin-left: auto;
+  padding: 12px 18px;
+  white-space: nowrap;
+  color: #344054;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  box-shadow: 0 2px 5px #1018280a;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.nav-cart:hover {
+  color: #075bd8;
+  border-color: #075bd8;
+}
+
+.nav-cart-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.cart-count {
+  position: absolute;
+  top: -11px;
+  right: -12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 19px;
+  height: 19px;
+  padding: 0 5px;
+  background: #ef4444;
+  color: #fff;
+  border-radius: 50px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+/* ---------- HAMBURGER (desktop par hidden) ---------- */
+.mobile-menu-button {
+  display: none;
+  flex-shrink: 0;
+  border: 0;
+  background: transparent;
+  color: #111827;
+}
+
+/* ---------- CART NOTIFICATION ---------- */
+.cart-notification {
+  position: fixed;
+  top: 90px;
+  right: 25px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 22px;
+  background: #16a34a;
+  color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  font-size: 14px;
+  font-weight: 600;
+  animation: cartNotificationIn 0.3s ease;
+}
+
+.cart-notification span {
+  font-size: 19px;
+  font-weight: 800;
+}
+
+@keyframes cartNotificationIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- WISHLIST + ACTIONS
+   (abhi Navbar.jsx mein use nahi ho raha) ---------- */
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.nav-wishlist {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: inherit;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.nav-wishlist:hover {
+  color: #e11d48;
+}
+
+.nav-wishlist-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.nav-wishlist:hover .nav-wishlist-icon svg {
+  fill: #ffe4e9;
+  stroke: #e11d48;
+}
+
+.wishlist-count {
+  position: absolute;
+  top: -9px;
+  right: -10px;
+  display: grid;
+  place-items: center;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border: 2px solid #fff;
+  border-radius: 20px;
+  background: #e11d48;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+/* =========================================
+   TABLET (761px - 1100px)
+   Desktop jaise saare links, compact size
+   (iPad Pro 1032px, Surface Pro 960px, iPad 768px)
+========================================= */
+@media (min-width: 761px) and (max-width: 1100px) {
+  .navbar {
+    gap: 12px;
+    padding: 10px 14px;
+  }
+
+  .brand {
+    gap: 8px;
+  }
+
+  .brand-logo {
+    width: 42px;
+    height: 42px;
+  }
+
+  .brand-copy strong {
+    font-size: 15px;
+  }
+
+  .brand-copy small {
+    font-size: 9px;
+  }
+
+  .nav-links {
+    gap: 30px; /* links ke beech gap */
+  }
+
+  .nav-links > a,
+  .nav-dropdown-toggle {
+    font-size: 15px; /* links ka size */
+  }
+
+  .nav-cart {
+    gap: 6px;
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .dropdown-menu {
+    width: 210px;
+  }
+}
+
+/* Tablet (901px - 1000px): thoda compact taake jagah ban jaye */
+@media (min-width: 901px) and (max-width: 1000px) {
+  .brand-copy small {
+    display: none;
+  }
+
+  .nav-links {
+    gap: 30px;
+  }
+
+  .nav-links > a,
+  .nav-dropdown-toggle {
+    font-size: 14px;
+  }
+}
+
+/* Chhote tablets (761px - 900px): aur compact taake links ek line mein aayen */
+@media (min-width: 761px) and (max-width: 900px) {
+  .brand-copy small {
+    display: none;
+  }
+
+  .nav-links {
+    gap: 20px;
+  }
+
+  .nav-links > a,
+  .nav-dropdown-toggle {
+    font-size: 13px;
+  }
+
+  .nav-cart {
+    padding: 10px;
+  }
+
+  .nav-cart > span:last-child {
+    display: none; /* sirf cart icon */
+  }
+}
+
+/* =========================================
+   MOBILE (760px aur neeche)
+   Hamburger dikhao, menu default band
+========================================= */
+@media (max-width: 760px) {
+  .navbar {
+    gap: 8px;
+    padding: 10px 14px;
+  }
+
+  .brand-logo {
+    width: 42px;
+    height: 42px;
+  }
+
+  .brand-copy strong {
+    font-size: 15px;
+  }
+
+  .brand-copy small {
+    max-width: 190px;
+    font-size: 9px;
+  }
+
+  /* Cart + hamburger right side par, touch-friendly 44px */
+  .nav-cart {
+    min-height: 44px;
+    gap: 6px;
+    padding: 9px 12px;
+    border-radius: 11px;
+    font-size: 13px;
+  }
+
+  .mobile-menu-button {
+    display: grid;
+    place-items: center;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 8px;
+    border-radius: 10px;
+  }
+
+  .mobile-menu-button:hover {
+    background: #eff6ff;
+    color: var(--blue);
+  }
+
+  /* Menu panel: default band, hamburger click par khule */
+  .nav-links {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: none;
+    flex: none;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 2px;
+    padding: 10px;
+    max-height: calc(100vh - 120px);
+    max-height: calc(100dvh - 120px);
+    overflow-y: auto;
+    white-space: normal;
+    background: #fff;
+    border: 1px solid #e8edf5;
+    border-radius: 16px;
+    box-shadow: 0 16px 35px #0f172a18;
+  }
+
+  .nav-links.nav-open {
+    display: flex;
+  }
+
+  .nav-links > a {
+    display: block;
+    padding: 13px 12px;
+    border-radius: 9px;
+    font-size: 15px;
+  }
+
+  .nav-links > a:hover {
+    background: #eff6ff;
+  }
+
+  .nav-dropdown {
+    display: block;
+    width: 100%;
+  }
+
+  .nav-dropdown-toggle {
+    width: 100%;
+    justify-content: space-between;
+    padding: 13px 12px;
+    border-radius: 9px;
+    font-size: 15px;
+    text-align: left;
+  }
+
+  .nav-dropdown-toggle:hover {
+    background: #eff6ff;
+  }
+
+  /* Categories list menu ke andar hi khule (tap se) */
+  .dropdown-menu {
+    position: static;
+    width: 100%;
+    padding: 4px 0 4px 12px;
+    transform: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .dropdown-menu::before {
+    display: none;
+  }
+
+  .nav-dropdown:hover .dropdown-menu,
+  .nav-dropdown:focus-within .dropdown-menu {
+    display: none;
+  }
+
+  .nav-dropdown.dropdown-open .dropdown-menu {
+    display: block;
+  }
+
+  .dropdown-menu a {
+    padding: 11px 12px;
+    font-size: 14px;
+  }
+
+  .nav-actions {
+    gap: 14px;
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 760px) {
+  .site-header {
+    padding: 12px 12px 4px;
+  }
+
+  .navbar {
+    min-height: 65px;
+    border-radius: 18px;
+  }
+
+  .nav-actions {
+    gap: 12px;
+  }
+}
+
+@media (max-width: 600px) {
+  /* Sirf icon dikhao ("Cart" / "Wishlist" text hide) */
+  .nav-wishlist > span:last-child,
+  .nav-cart > span:last-child {
+    display: none;
+  }
+
+  .nav-cart {
+    min-width: 44px;
+  }
+
+  .cart-count {
+    top: -9px;
+    right: -9px;
+  }
+
+  /* Notification navbar ke neeche aaye */
+  .cart-notification {
+    top: 92px;
+    right: 12px;
+    left: 12px;
+    justify-content: center;
+  }
+}
+
+/* ---------- Extra-small phones ---------- */
+@media (max-width: 400px) {
+  .navbar {
+    gap: 5px;
+    padding-right: 8px;
+    padding-left: 8px;
+  }
+
+  .brand {
+    gap: 6px;
+  }
+
+  .brand-copy strong {
+    font-size: 13px;
+  }
+
+  .brand-copy small {
+    max-width: 125px;
+    font-size: 8px;
+  }
+
+  .nav-cart svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .mobile-menu-button {
+    padding: 6px;
+  }
+}
