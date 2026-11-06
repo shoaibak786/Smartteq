@@ -7,6 +7,7 @@ import {
   Handshake, FileText, CheckCircle2,
 } from "lucide-react";
 import "../styles/Repairing.css";
+// import "../styles/RepairingWow.css"; // wow layer, must come after Repairing.css
 
 const PHONE = "0321-5003621";
 const PHONE_LINK = "tel:+923215003621";
@@ -80,7 +81,7 @@ function CountUp({ end, suffix = "", duration = 1400 }) {
     const run = (ts) => {
       if (!startTime) startTime = ts;
       const progress = Math.min((ts - startTime) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3); // ease-out
+      const eased = 1 - Math.pow(1 - progress, 3);
       setCount(Math.floor(eased * end));
       if (progress < 1) frame = requestAnimationFrame(run);
     };
@@ -111,10 +112,90 @@ function CountUp({ end, suffix = "", duration = 1400 }) {
 }
 
 export default function RepairingPage() {
+  const pageRef = useRef(null);
+
+  /* Visual effects only: scroll progress, reveal, cursor spotlight, hero tilt */
+  useEffect(() => {
+    const root = pageRef.current;
+    if (!root) return undefined;
+    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    const fine = window.matchMedia?.("(hover: hover) and (pointer: fine)").matches;
+
+    let raf = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        root.style.setProperty("--p", max > 0 ? Math.min(window.scrollY / max, 1) : 0);
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+
+    let io;
+    if (!reduce && "IntersectionObserver" in window) {
+      root.classList.add("rp-js");
+      io = new IntersectionObserver(
+        (entries) =>
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add("is-in");
+              io.unobserve(e.target);
+            }
+          }),
+        { threshold: 0.12, rootMargin: "0px 0px -6% 0px" }
+      );
+      root.querySelectorAll("[data-reveal]").forEach((el) => io.observe(el));
+    }
+
+    const hero = root.querySelector(".rp-hero");
+    const media = root.querySelector(".rp-hero__media");
+    const onMove = (e) => {
+      const card = e.target.closest?.(".rp-spot");
+      if (card) {
+        const r = card.getBoundingClientRect();
+        card.style.setProperty("--mx", `${e.clientX - r.left}px`);
+        card.style.setProperty("--my", `${e.clientY - r.top}px`);
+      }
+      if (hero && hero.contains(e.target)) {
+        const r = hero.getBoundingClientRect();
+        hero.style.setProperty("--hx", `${e.clientX - r.left}px`);
+        hero.style.setProperty("--hy", `${e.clientY - r.top}px`);
+      }
+      if (media && media.contains(e.target)) {
+        const r = media.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - 0.5;
+        const y = (e.clientY - r.top) / r.height - 0.5;
+        media.style.setProperty("--ry", `${x * 9}deg`);
+        media.style.setProperty("--rx", `${-y * 9}deg`);
+      }
+    };
+    const onLeave = () => {
+      media?.style.setProperty("--rx", "0deg");
+      media?.style.setProperty("--ry", "0deg");
+    };
+    if (fine && !reduce) {
+      root.addEventListener("pointermove", onMove);
+      media?.addEventListener("pointerleave", onLeave);
+    }
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(raf);
+      io?.disconnect();
+      root.removeEventListener("pointermove", onMove);
+      media?.removeEventListener("pointerleave", onLeave);
+    };
+  }, []);
+
   return (
-    <main className="repair-page">
+    <main className="repair-page" ref={pageRef}>
+      <div className="rp-progress" aria-hidden="true" />
+
       {/* HERO */}
       <section className="rp-hero">
+        <span className="rp-aurora rp-aurora--a" aria-hidden="true" />
+        <span className="rp-aurora rp-aurora--b" aria-hidden="true" />
         <div className="rp-hero__inner">
           <div className="rp-hero__content">
             <span className="rp-pill">
@@ -166,7 +247,7 @@ export default function RepairingPage() {
       {/* STATS */}
       <section className="rp-stats" aria-label="Our service highlights">
         {stats.map(({ icon: Icon, value, count, suffix, label }, i) => (
-          <article className="rp-stat-card" key={label} style={{ "--i": i }}>
+          <article className="rp-stat-card rp-spot" key={label} style={{ "--i": i }}>
             <div className="rp-icon-box"><Icon size={26} /></div>
             <strong>{value ? value : <CountUp end={count} suffix={suffix} />}</strong>
             <span>{label}</span>
@@ -174,8 +255,17 @@ export default function RepairingPage() {
         ))}
       </section>
 
+      {/* SERVICE TICKER (decorative) */}
+      <div className="rp-marquee" aria-hidden="true">
+        <div className="rp-marquee__track">
+          {[...services, ...services].map(({ icon: Icon, title }, i) => (
+            <span key={`${title}-${i}`}><Icon size={16} /> {title}</span>
+          ))}
+        </div>
+      </div>
+
       {/* NATIONWIDE SHIPPING */}
-      <section className="rp-shipping">
+      <section className="rp-shipping" data-reveal>
         <div className="rp-shipping__icon"><Truck size={34} /></div>
         <div className="rp-shipping__main">
           <h2>We Ship Nationwide</h2>
@@ -197,7 +287,7 @@ export default function RepairingPage() {
       </section>
 
       {/* CORPORATE */}
-      <section className="rp-corporate">
+      <section className="rp-corporate" data-reveal>
         <div className="rp-corporate__top">
           <img
             src={FALLBACK_IMG}
@@ -222,8 +312,8 @@ export default function RepairingPage() {
         </div>
 
         <div className="rp-audience-grid">
-          {audiences.map(({ icon: Icon, title, desc }) => (
-            <article className="rp-audience-card" key={title}>
+          {audiences.map(({ icon: Icon, title, desc }, i) => (
+            <article className="rp-audience-card rp-spot" key={title} data-reveal style={{ "--d": `${i * 90}ms` }}>
               <div className="rp-audience-card__icon"><Icon size={19} /></div>
               <h3>{title}</h3>
               <p>{desc}</p>
@@ -234,7 +324,7 @@ export default function RepairingPage() {
 
       {/* SERVICES */}
       <section className="rp-services">
-        <div className="rp-services__intro">
+        <div className="rp-services__intro" data-reveal>
           <img
             src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=900&q=85"
             alt="Laptop internal components and circuit board"
@@ -250,8 +340,8 @@ export default function RepairingPage() {
         </div>
 
         <div className="rp-service-grid">
-          {services.map(({ icon: Icon, title, desc }) => (
-            <article className="rp-service-card" key={title}>
+          {services.map(({ icon: Icon, title, desc }, i) => (
+            <article className="rp-service-card rp-spot" key={title} data-reveal style={{ "--d": `${(i % 3) * 90}ms` }}>
               <div className="rp-service-card__icon"><Icon size={20} /></div>
               <h3>{title}</h3>
               <p>{desc}</p>
@@ -262,14 +352,19 @@ export default function RepairingPage() {
 
       {/* TERMS */}
       <section className="rp-terms">
-        <div className="rp-section-heading">
+        <div className="rp-section-heading" data-reveal>
           <h2>Delivery &amp; service terms</h2>
           <p>Everything you need to know before you book.</p>
         </div>
 
         <div className="rp-terms-grid">
-          {terms.map(({ icon: Icon, title, desc, tone, whatsapp }) => (
-            <article className={`rp-term-card rp-term-card--${tone}`} key={title}>
+          {terms.map(({ icon: Icon, title, desc, tone, whatsapp }, i) => (
+            <article
+              className={`rp-term-card rp-spot rp-term-card--${tone}`}
+              key={title}
+              data-reveal
+              style={{ "--d": `${(i % 2) * 90}ms` }}
+            >
               <div className="rp-term-card__icon"><Icon size={19} /></div>
               <div>
                 <h3>{title}</h3>
@@ -286,7 +381,7 @@ export default function RepairingPage() {
       </section>
 
       {/* CTA */}
-      <section className="rp-cta">
+      <section className="rp-cta" data-reveal>
         <h2>Ready to get started?</h2>
         <p>
           Don’t let technical issues slow you down. Contact us today for professional,

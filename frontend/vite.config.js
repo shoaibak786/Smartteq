@@ -11,6 +11,18 @@ export default defineConfig({
 
   plugins: [react(), tailwindcss()],
 
+  resolve: {
+    dedupe: ['react', 'react-dom'],
+    alias: {
+      react: path.resolve(__dirname, 'node_modules/react'),
+      'react-dom': path.resolve(__dirname, 'node_modules/react-dom'),
+    },
+  },
+
+  optimizeDeps: {
+    include: ['framer-motion', 'react', 'react-dom'],
+  },
+
   server: {
     proxy: {
       '/api': {

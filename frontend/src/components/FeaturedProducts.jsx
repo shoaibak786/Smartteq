@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
+  ArrowUpRight,
   ShoppingCart,
   Zap,
   Sparkles,
@@ -27,6 +28,15 @@ export default function FeaturedProducts() {
   const [addingProductId, setAddingProductId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  // Carousel arrows / progress bar ki state (sirf design ke liye)
+  const [scrollState, setScrollState] = useState({
+    canPrev: false,
+    canNext: true,
+    scrollable: true,
+    thumb: 30,
+    offset: 0,
+  });
 
   const { cartItems, addToCart } = useCart();
 
@@ -125,6 +135,46 @@ export default function FeaturedProducts() {
     };
   }, []);
 
+  // Track ki scroll position se arrows aur progress bar update karo
+  const updateScrollState = useCallback(() => {
+    const track = trackRef.current;
+
+    if (!track) return;
+
+    const max = track.scrollWidth - track.clientWidth;
+    const ratio = track.scrollWidth
+      ? track.clientWidth / track.scrollWidth
+      : 1;
+    const thumb = Math.max(ratio * 100, 12);
+    const progress = max > 0 ? track.scrollLeft / max : 0;
+
+    setScrollState({
+      canPrev: track.scrollLeft > 4,
+      canNext: track.scrollLeft < max - 4,
+      scrollable: max > 4,
+      thumb,
+      offset: progress * (100 - thumb),
+    });
+  }, []);
+
+  useEffect(() => {
+    const track = trackRef.current;
+
+    if (!track) return;
+
+    updateScrollState();
+
+    track.addEventListener("scroll", updateScrollState, {
+      passive: true,
+    });
+    window.addEventListener("resize", updateScrollState);
+
+    return () => {
+      track.removeEventListener("scroll", updateScrollState);
+      window.removeEventListener("resize", updateScrollState);
+    };
+  }, [updateScrollState, products]);
+
   // Screen ki width ke hisaab se scroll (mobile par bhi sahi kaam kare)
   const scrollProducts = (direction) => {
     const track = trackRef.current;
@@ -178,228 +228,273 @@ export default function FeaturedProducts() {
 
   return (
     <section className="featured-section" id="products">
-      <div className="featured-header">
-        <div className="featured-heading">
-          <span className="featured-eyebrow">
-            HAND-PICKED FOR YOU
-          </span>
+      <div className="featured-inner">
+        <div className="featured-header">
+          <div className="featured-heading">
+            <span className="featured-eyebrow">
+              <i />
+              Hand-picked for you
+            </span>
 
-          <h2>
-            Featured <span>Products</span>
-          </h2>
+            <h2>
+              Featured <span>Products</span>
+            </h2>
 
-          <p>
-            Exceptional performance and value — carefully selected
-            <br className="featured-desktop-break" />
-            for you.
-          </p>
+            <p>
+              Exceptional performance and value — carefully selected
+              <br className="featured-desktop-break" />
+              for you.
+            </p>
+          </div>
+
+          <div className="featured-actions">
+            <button
+              type="button"
+              className="featured-arrow"
+              onClick={() => scrollProducts(-1)}
+              disabled={!scrollState.canPrev}
+              aria-label="Previous products"
+            >
+              <ArrowLeft size={18} />
+            </button>
+
+            <button
+              type="button"
+              className="featured-arrow"
+              onClick={() => scrollProducts(1)}
+              disabled={!scrollState.canNext}
+              aria-label="Next products"
+            >
+              <ArrowRight size={18} />
+            </button>
+
+            <Link className="featured-view-all" to="/products">
+              View All <ArrowRight size={16} />
+            </Link>
+          </div>
         </div>
 
-        <div className="featured-actions">
-          <button
-            type="button"
-            className="featured-arrow"
-            onClick={() => scrollProducts(-1)}
-            aria-label="Previous products"
+        {loading ? (
+          <div
+            className="featured-track featured-track-loading"
+            role="status"
+            aria-label="Loading featured products"
           >
-            <ArrowLeft size={16} />
-          </button>
-
-          <button
-            type="button"
-            className="featured-arrow"
-            onClick={() => scrollProducts(1)}
-            aria-label="Next products"
-          >
-            <ArrowRight size={16} />
-          </button>
-
-          <Link className="featured-view-all" to="/products">
-            View All <ArrowRight size={15} />
-          </Link>
-        </div>
-      </div>
-
-      {loading ? (
-        <p className="featured-message">
-          Loading featured products...
-        </p>
-      ) : error ? (
-        <p className="featured-message">{error}</p>
-      ) : products.length === 0 ? (
-        <p className="featured-message">
-          No featured products available.
-        </p>
-      ) : (
-        <div className="featured-track" ref={trackRef}>
-          {products.map((product) => {
-            const price = Number(product.price || 0);
-
-            const oldPrice = Number(
-              product.oldPrice ??
-              product.old_price ??
-              0
-            );
-
-            const savings = oldPrice - price;
-
-            // Calculate discount even if API does not send discount
-            const discount =
-              oldPrice > price && oldPrice > 0
-                ? Math.round(
-                  ((oldPrice - price) / oldPrice) * 100
-                )
-                : Number(product.discount || 0);
-
-            const cartProduct = cartItems.find(
-              (item) =>
-                String(item.id) === String(product.id)
-            );
-
-            const cartQuantity = Number(
-              cartProduct?.quantity || 0
-            );
-
-            const stock = Number(product.stock ?? 0);
-
-            const remainingStock = Math.max(
-              stock - cartQuantity,
-              0
-            );
-
-            const isOutOfStock = stock <= 0;
-
-            const stockLimitReached =
-              !isOutOfStock &&
-              cartQuantity >= stock;
-
-            const isAdding =
-              String(addingProductId) === String(product.id);
-
-            const isDisabled =
-              isOutOfStock ||
-              stockLimitReached ||
-              addingProductId !== null;
-
-            const isAdded =
-              String(addedProductId) === String(product.id);
-
-            return (
-              <article
-                className="featured-card"
-                key={product.id}
-              >
-                <div className="featured-image-wrap">
-                  <Link
-                    to={`/product/${product.id}`}
-                    className="featured-product-link"
-                  >
-                    <img
-                      className="featured-product-image"
-                      src={product.image}
-                      alt={product.name}
-                      loading="lazy"
-                    />
-                  </Link>
-
-                  {product.featured && (
-                    <span className="featured-badge">
-                      <Sparkles size={11} />
-                      Featured
-                    </span>
-                  )}
-
-                  {discount > 0 && (
-                    <span className="discount-badge">
-                      -{discount}%
-                    </span>
-                  )}
-
-                  {isOutOfStock ? (
-                    <span className="stock-badge out-of-stock">
-                      Out Of Stock
-                    </span>
-                  ) : remainingStock <= 5 ? (
-                    <span className="stock-badge low-stock">
-                      {remainingStock} Left
-                    </span>
-                  ) : null}
+            {[0, 1, 2, 3].map((item) => (
+              <div className="featured-card featured-skeleton" key={item}>
+                <div className="skeleton-image" />
+                <div className="skeleton-body">
+                  <span className="skeleton-line short" />
+                  <span className="skeleton-line" />
+                  <span className="skeleton-line" />
+                  <span className="skeleton-line price" />
+                  <span className="skeleton-button" />
                 </div>
+              </div>
+            ))}
+          </div>
+        ) : error ? (
+          <p className="featured-message">{error}</p>
+        ) : products.length === 0 ? (
+          <p className="featured-message">
+            No featured products available.
+          </p>
+        ) : (
+          <>
+            <div className="featured-track" ref={trackRef}>
+              {products.map((product) => {
+                const price = Number(product.price || 0);
 
-                <div className="featured-card-body">
-                  <span className="product-category">
-                    {product.category}
-                  </span>
+                const oldPrice = Number(
+                  product.oldPrice ??
+                  product.old_price ??
+                  0
+                );
 
-                  <h3>
-                    <Link
-                      to={`/product/${product.id}`}
-                      className="featured-product-name-link"
-                    >
-                      {product.name}
-                    </Link>
-                  </h3>
+                const savings = oldPrice - price;
 
-                  <p className="product-description">
-                    {product.description}
-                  </p>
+                // Calculate discount even if API does not send discount
+                const discount =
+                  oldPrice > price && oldPrice > 0
+                    ? Math.round(
+                      ((oldPrice - price) / oldPrice) * 100
+                    )
+                    : Number(product.discount || 0);
 
-                  <div className="product-price-area">
-                    <div className="product-prices">
-                      <strong>
-                        {formatPrice(price)}
-                      </strong>
+                const cartProduct = cartItems.find(
+                  (item) =>
+                    String(item.id) === String(product.id)
+                );
 
-                      {oldPrice > price && (
-                        <del>
-                          {formatPrice(oldPrice)}
-                        </del>
+                const cartQuantity = Number(
+                  cartProduct?.quantity || 0
+                );
+
+                const stock = Number(product.stock ?? 0);
+
+                const remainingStock = Math.max(
+                  stock - cartQuantity,
+                  0
+                );
+
+                const isOutOfStock = stock <= 0;
+
+                const stockLimitReached =
+                  !isOutOfStock &&
+                  cartQuantity >= stock;
+
+                const isAdding =
+                  String(addingProductId) === String(product.id);
+
+                const isDisabled =
+                  isOutOfStock ||
+                  stockLimitReached ||
+                  addingProductId !== null;
+
+                const isAdded =
+                  String(addedProductId) === String(product.id);
+
+                return (
+                  <article
+                    className={`featured-card ${
+                      isOutOfStock ? "card-out-of-stock" : ""
+                    }`}
+                    key={product.id}
+                  >
+                    <div className="featured-image-wrap">
+                      <Link
+                        to={`/product/${product.id}`}
+                        className="featured-product-link"
+                      >
+                        <img
+                          className="featured-product-image"
+                          src={product.image}
+                          alt={product.name}
+                          loading="lazy"
+                        />
+                      </Link>
+
+                      {product.featured && (
+                        <span className="featured-badge">
+                          <Sparkles size={12} />
+                          Featured
+                        </span>
                       )}
+
+                      {discount > 0 && (
+                        <span className="discount-badge">
+                          -{discount}%
+                        </span>
+                      )}
+
+                      {isOutOfStock ? (
+                        <span className="stock-badge out-of-stock">
+                          Out Of Stock
+                        </span>
+                      ) : remainingStock <= 5 ? (
+                        <span className="stock-badge low-stock">
+                          {remainingStock} Left
+                        </span>
+                      ) : null}
+
+                      {/* Hover par "View Details" (sirf mouse devices) */}
+                      <Link
+                        to={`/product/${product.id}`}
+                        className="featured-quick-view"
+                        aria-hidden="true"
+                        tabIndex={-1}
+                      >
+                        View Details <ArrowUpRight size={15} />
+                      </Link>
                     </div>
 
-                    {savings > 0 && (
-                      <span className="product-savings">
-                        You save {formatPrice(savings)}
+                    <div className="featured-card-body">
+                      <span className="product-category">
+                        {product.category}
                       </span>
-                    )}
-                  </div>
 
-                  <button
-                    type="button"
-                    className={`add-to-cart-button ${isDisabled
-                      ? "cart-disabled"
-                      : isAdded
-                        ? "cart-added"
-                        : ""
-                      }`}
-                    disabled={isDisabled}
-                    onClick={() => handleAddToCart(product)}
-                  >
-                    {isOutOfStock ? (
-                      "Out Of Stock"
-                    ) : stockLimitReached ? (
-                      "Stock Limit Reached"
-                    ) : isAdding ? (
-                      "Adding..."
-                    ) : isAdded ? (
-                      <>
-                        <Check size={16} />
-                        Added
-                      </>
-                    ) : (
-                      <>
-                        <ShoppingCart size={15} />
-                        Add to Cart
-                        <Zap size={14} />
-                      </>
-                    )}
-                  </button>
-                </div>
-              </article>
-            );
-          })}
-        </div>
-      )}
+                      <h3>
+                        <Link
+                          to={`/product/${product.id}`}
+                          className="featured-product-name-link"
+                        >
+                          {product.name}
+                        </Link>
+                      </h3>
+
+                      <p className="product-description">
+                        {product.description}
+                      </p>
+
+                      <div className="product-price-area">
+                        <div className="product-prices">
+                          <strong>
+                            {formatPrice(price)}
+                          </strong>
+
+                          {oldPrice > price && (
+                            <del>
+                              {formatPrice(oldPrice)}
+                            </del>
+                          )}
+                        </div>
+
+                        {savings > 0 && (
+                          <span className="product-savings">
+                            You save {formatPrice(savings)}
+                          </span>
+                        )}
+                      </div>
+
+                      <button
+                        type="button"
+                        className={`add-to-cart-button ${isDisabled
+                          ? "cart-disabled"
+                          : isAdded
+                            ? "cart-added"
+                            : ""
+                          }`}
+                        disabled={isDisabled}
+                        onClick={() => handleAddToCart(product)}
+                      >
+                        {isOutOfStock ? (
+                          "Out Of Stock"
+                        ) : stockLimitReached ? (
+                          "Stock Limit Reached"
+                        ) : isAdding ? (
+                          "Adding..."
+                        ) : isAdded ? (
+                          <>
+                            <Check size={17} />
+                            Added
+                          </>
+                        ) : (
+                          <>
+                            <ShoppingCart size={16} />
+                            Add to Cart
+                            <Zap size={15} />
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+
+            {scrollState.scrollable && (
+              <div className="featured-progress" aria-hidden="true">
+                <span
+                  style={{
+                    width: `${scrollState.thumb}%`,
+                    marginLeft: `${scrollState.offset}%`,
+                  }}
+                />
+              </div>
+            )}
+          </>
+        )}
+      </div>
     </section>
   );
 }

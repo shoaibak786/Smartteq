@@ -1063,3 +1063,253 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ============================================================
+   WOW LAYER (premium effects). Kept after the base styles on purpose.
+   ============================================================ */
+/* Repairing page: "wow" layer. Import AFTER Repairing.css. Original CSS stays unchanged. */
+.repair-page{--ease:cubic-bezier(.2,.7,.2,1)}
+
+/* Scroll progress */
+.rp-progress{position:fixed;inset:0 0 auto;height:4px;z-index:60;background:linear-gradient(90deg,#2b6bff,#6d4aff,#22d3ee);transform-origin:left;transform:scaleX(var(--p,0));box-shadow:0 0 14px rgba(109,74,255,.7)}
+
+/* Hero: aurora, cursor spotlight, orchestrated load-in */
+.rp-hero{--hx:70%;--hy:30%}
+.rp-hero::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(420px circle at var(--hx) var(--hy),rgba(120,150,255,.22),transparent 65%)}
+.rp-aurora{position:absolute;border-radius:50%;filter:blur(70px);opacity:.55;pointer-events:none}
+.rp-aurora--a{width:420px;height:420px;left:-80px;top:-60px;background:#6d4aff;animation:rp-drift 14s ease-in-out infinite alternate}
+.rp-aurora--b{width:380px;height:380px;right:-60px;bottom:40px;background:#22d3ee;opacity:.28;animation:rp-drift 18s ease-in-out infinite alternate-reverse}
+@keyframes rp-drift{to{transform:translate(70px,50px) scale(1.18)}}
+.rp-hero__content>*{animation:rp-in .8s var(--ease) backwards}
+.rp-hero__content>:nth-child(2){animation-delay:.12s}
+.rp-hero__content>:nth-child(3){animation-delay:.24s}
+.rp-hero__content>:nth-child(4){animation-delay:.36s}
+.rp-hero__content>:nth-child(5){animation-delay:.48s}
+@keyframes rp-in{from{opacity:0;transform:translateY(26px);filter:blur(8px)}}
+.rp-hero h1{background:linear-gradient(100deg,#fff 30%,#b9c8ff 60%,#fff 90%);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:rp-in .8s var(--ease) .12s backwards,rp-sheen 6s ease-in-out 1s infinite}
+@keyframes rp-sheen{50%{background-position:-120% 0}}
+.rp-hero__media{transform:perspective(1000px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .25s ease-out;animation:rp-in 1s var(--ease) .3s backwards}
+.rp-hero__float{animation:rp-bob 4.5s ease-in-out infinite;transform:translateZ(40px)}
+@keyframes rp-bob{50%{translate:0 -10px}}
+.rp-hero__float-icon::after{content:"";position:absolute;inset:-4px;border-radius:16px;border:2px solid rgba(109,74,255,.5);animation:rp-ping 2.2s ease-out infinite}
+.rp-hero__float-icon{position:relative}
+@keyframes rp-ping{to{transform:scale(1.5);opacity:0}}
+.rp-btn--primary{animation:rp-glow 2.8s ease-in-out infinite}
+@keyframes rp-glow{50%{box-shadow:0 14px 36px -6px rgba(109,74,255,.95)}}
+
+/* Service marquee */
+.rp-marquee{width:var(--wrap);margin:0 auto 80px;overflow:hidden;padding:18px 0;border-radius:999px;background:#fff;border:1px solid var(--line);box-shadow:0 20px 40px -26px rgba(24,20,80,.35);-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.rp-marquee__track{display:flex;gap:14px;width:max-content;animation:rp-scroll 46s linear infinite}
+.rp-marquee:hover .rp-marquee__track{animation-play-state:paused}
+.rp-marquee__track span{display:inline-flex;align-items:center;gap:9px;padding:9px 16px;border-radius:999px;background:#f1efff;color:#4a35c9;font-size:14px;font-weight:600;white-space:nowrap}
+@keyframes rp-scroll{to{transform:translateX(calc(-50% - 7px))}}
+
+/* Scroll reveal (only when JS has run) */
+.rp-js [data-reveal]{opacity:0;transform:translateY(34px) scale(.98);filter:blur(6px);transition:opacity .8s var(--ease),transform .8s var(--ease),filter .8s var(--ease);transition-delay:var(--d,0ms)}
+.rp-js [data-reveal].is-in{opacity:1;transform:none;filter:none}
+
+/* Cursor spotlight on cards */
+.rp-spot{position:relative;overflow:hidden}
+.rp-spot::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;opacity:0;transition:opacity .3s;background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%),rgba(109,74,255,.16),transparent 70%)}
+.rp-audience-card.rp-spot::before{background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%),rgba(150,180,255,.28),transparent 70%)}
+.rp-spot:hover::before{opacity:1}
+.rp-spot>*{position:relative;z-index:1}
+.rp-stat-card:hover .rp-icon-box{animation:rp-pop .6s var(--ease)}
+@keyframes rp-pop{40%{transform:scale(1.15) rotate(-8deg)}}
+
+/* Shipping truck + CTA shine + FAB pulse */
+.rp-shipping__icon{animation:rp-bob 3.6s ease-in-out infinite;box-shadow:0 0 0 0 rgba(120,160,255,.5)}
+.rp-cta::before{content:"";position:absolute;inset:-50%;background:conic-gradient(from 0deg,transparent 0 70%,rgba(255,255,255,.22) 85%,transparent);animation:rp-spin 9s linear infinite;pointer-events:none}
+.rp-cta>*{position:relative}
+@keyframes rp-spin{to{transform:rotate(360deg)}}
+.rp-fab::before{content:"";position:absolute;inset:0;border-radius:50%;background:#16a870;z-index:-1;animation:rp-ping 2s ease-out infinite}
+.rp-fab{isolation:isolate}
+
+@media (max-width:720px){
+  .rp-hero__media{transform:none!important}
+  .rp-marquee{margin-bottom:56px;border-radius:22px}
+  .rp-aurora{opacity:.35}
+}
+@media (prefers-reduced-motion:reduce){
+  .rp-js [data-reveal]{opacity:1;transform:none;filter:none}
+  .rp-hero h1{color:#fff;-webkit-text-fill-color:#fff;background:none}
+}
+
+/* ============================================================
+   EXTRA RESPONSIVE POLISH (tablet, phone, small phone, touch)
+   ============================================================ */
+@media (max-width: 1050px) {
+  .rp-hero {
+    padding: 60px 24px 140px;
+  }
+
+  .rp-hero__media {
+    width: 100%;
+    margin: 12px auto 0;
+  }
+
+  .rp-hero__lead {
+    max-width: 60ch;
+  }
+
+  .rp-corporate__top > img {
+    height: 280px;
+  }
+
+  .rp-services__intro img {
+    height: 260px;
+  }
+
+  .rp-shipping__timelines strong {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 720px) {
+  .rp-pill {
+    margin-bottom: 20px;
+    font-size: 12.5px;
+  }
+
+  .rp-hero h1 {
+    max-width: 14ch;
+  }
+
+  .rp-trust {
+    gap: 8px 16px;
+    font-size: 13px;
+  }
+
+  .rp-btn {
+    min-height: 50px;
+    padding: 0 18px;
+    font-size: 14.5px;
+  }
+
+  .rp-stat-card strong {
+    font-size: clamp(20px, 6vw, 26px);
+    overflow-wrap: anywhere;
+  }
+
+  .rp-shipping__timelines {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .rp-shipping__timelines > div {
+    padding: 16px 10px;
+  }
+
+  .rp-shipping__timelines strong {
+    font-size: 20px;
+  }
+
+  .rp-city {
+    padding: 7px 12px;
+    font-size: 12.5px;
+  }
+
+  .rp-audience-tags span {
+    padding: 7px 12px;
+    font-size: 12.5px;
+  }
+
+  .rp-term-card {
+    grid-template-columns: 40px 1fr;
+    gap: 14px;
+    padding: 18px;
+  }
+
+  .rp-term-card__icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .rp-section-heading {
+    margin-bottom: 24px;
+  }
+
+  .rp-cta {
+    padding: 44px 20px;
+  }
+
+  /* keep the floating button from covering the last section */
+  .repair-page {
+    padding-bottom: 88px;
+  }
+}
+
+@media (max-width: 400px) {
+  .repair-page {
+    --wrap: calc(100% - 20px);
+  }
+
+  .rp-hero {
+    padding: 36px 14px 110px;
+  }
+
+  .rp-hero h1 {
+    font-size: 36px;
+  }
+
+  .rp-hero__image {
+    height: 220px;
+  }
+
+  .rp-hero__float {
+    left: 8px;
+    right: 8px;
+    bottom: 10px;
+  }
+
+  .rp-stats {
+    gap: 10px;
+  }
+
+  .rp-stat-card {
+    min-height: 150px;
+    padding: 16px 8px;
+  }
+
+  .rp-icon-box {
+    width: 44px;
+    height: 44px;
+  }
+
+  .rp-corporate {
+    padding: 20px 14px;
+  }
+
+  .rp-corporate__top > img {
+    height: 190px;
+  }
+
+  .rp-shipping {
+    padding: 22px 16px;
+  }
+}
+
+/* Phones and tablets have no hover: stop cards from sticking "lifted" after a tap */
+@media (hover: none) {
+  .rp-stat-card:hover,
+  .rp-service-card:hover,
+  .rp-term-card:hover,
+  .rp-audience-card:hover,
+  .rp-city:hover,
+  .rp-whatsapp-chip:hover,
+  .rp-fab:hover {
+    transform: none;
+  }
+
+  .rp-hero__media:hover::before {
+    transform: none;
+  }
+}
+
+/* Notched phones: keep the floating button clear of the home bar */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .rp-fab {
+    bottom: calc(14px + env(safe-area-inset-bottom));
+    right: calc(14px + env(safe-area-inset-right));
+  }
+}

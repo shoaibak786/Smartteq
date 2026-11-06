@@ -1,21 +1,26 @@
+/* =========================================
+   SMARTTEQ — FOOTER (premium dark design)
+========================================= */
+
 .footer {
   --footer-blue: #4385ff;
-  --footer-text: #aab7cb;
-  --footer-muted: #8492a8;
+  --footer-cyan: #38bdf8;
+  --footer-text: #b4c1d6;
+  --footer-muted: #8c9bb2;
+  --footer-glass: rgba(255, 255, 255, 0.045);
+  --footer-line: rgba(148, 163, 184, 0.16);
 
   position: relative;
-  padding: 64px 5% 0;
+  padding: 84px 5% 0;
   overflow: hidden;
   color: #fff;
   background:
-    radial-gradient(
-      ellipse at 10% 0%,
-      rgba(37, 99, 235, 0.16),
-      transparent 38%
-    ),
-    linear-gradient(135deg, #0b1220 0%, #101b30 55%, #0a1221 100%);
+    radial-gradient(ellipse 60% 50% at 8% 0%, rgba(40, 100, 240, 0.28), transparent 70%),
+    radial-gradient(ellipse 50% 45% at 96% 18%, rgba(6, 182, 212, 0.14), transparent 70%),
+    linear-gradient(180deg, #0a1020 0%, #0c1529 60%, #080e1d 100%);
 }
 
+/* Top gradient line */
 .footer::before {
   position: absolute;
   top: 0;
@@ -23,13 +28,7 @@
   left: 0;
   height: 3px;
   content: "";
-  background: linear-gradient(
-    90deg,
-    #2874ff,
-    #39c6ff,
-    #7655ff,
-    #2874ff
-  );
+  background: linear-gradient(90deg, #2874ff, #39c6ff, #7655ff, #2874ff);
   background-size: 200% 100%;
   animation: footer-gradient 8s linear infinite;
 }
@@ -39,66 +38,76 @@
   to { background-position: 200% 50%; }
 }
 
+/* ---------- Main grid ---------- */
+
 .footer__container {
+  position: relative;
+  z-index: 1;
   width: 100%;
   max-width: 1400px;
   display: grid;
-  grid-template-columns: 1.35fr 0.75fr 1.15fr;
-  gap: 65px;
+  grid-template-columns: 1.4fr 0.8fr 1.2fr;
+  gap: 72px;
   margin: 0 auto;
-  padding-bottom: 52px;
+  padding-bottom: 64px;
 }
-
-/* Brand */
 
 .footer__brand,
 .footer__col {
   min-width: 0;
 }
 
+/* Brand */
+
 .footer__brand-link {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 13px;
   color: #fff;
   text-decoration: none;
 }
 
 .footer__logo {
-  width: 48px;
-  height: 48px;
+  width: 52px;
+  height: 52px;
   object-fit: contain;
 }
 
 .footer__brand-name {
-  font-size: 26px;
-  font-weight: 850;
-  letter-spacing: 1.3px;
+  font-family: "Bricolage Grotesque", system-ui, sans-serif;
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: 1px;
 }
 
 .footer__brand-tagline {
-  display: block;
-  margin-top: 8px;
-  color: #80aaff;
-  font-size: 9px;
-  font-weight: 750;
-  letter-spacing: 1.8px;
+  display: inline-block;
+  margin-top: 16px;
+  padding: 7px 14px;
+
+  color: #9cc0ff;
+  background: rgba(67, 133, 255, 0.12);
+  border: 1px solid rgba(67, 133, 255, 0.28);
+  border-radius: 999px;
+
+  font-size: 13px;
+  font-weight: 700;
 }
 
 .footer__text {
-  max-width: 370px;
-  margin: 20px 0 25px;
+  max-width: 410px;
+  margin: 22px 0 30px;
   color: var(--footer-text);
-  font-size: 14px;
-  line-height: 1.9;
+  font-size: 15px;
+  line-height: 1.85;
 }
 
-/* Social Links */
+/* Social links */
 
 .footer__follow {
   margin: 0 0 14px;
   color: #f8fafc;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
 }
 
@@ -109,17 +118,20 @@
 }
 
 .footer__social {
-  width: 39px;
-  height: 39px;
+  width: 44px;
+  height: 44px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  border-radius: 11px;
+
   color: #d8e3f5;
-  background: rgba(255, 255, 255, 0.045);
-  font-size: 16px;
+  background: var(--footer-glass);
+  border: 1px solid var(--footer-line);
+  border-radius: 50%;
+
+  font-size: 17px;
   text-decoration: none;
+
   transition:
     transform 0.25s ease,
     background 0.25s ease,
@@ -127,232 +139,344 @@
     color 0.25s ease;
 }
 
-/* Footer Columns */
+/* Column headings */
 
 .footer__heading {
-  margin: 7px 0 14px;
+  position: relative;
+  margin: 6px 0 24px;
+  padding-bottom: 16px;
+
   color: #fff;
-  font-size: 17px;
-  font-weight: 750;
+  font-family: "Bricolage Grotesque", system-ui, sans-serif;
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
 }
 
-.footer__heading-line {
-  width: 37px;
+.footer__heading::after {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
   height: 3px;
-  display: block;
-  margin-bottom: 25px;
+  content: "";
   border-radius: 5px;
-  background: linear-gradient(90deg, #3985ff, #38bdf8);
+  background: linear-gradient(90deg, #3985ff, var(--footer-cyan));
 }
+
+/* Quick links: saaf list, heading ke barabar */
 
 .footer__links,
 .footer__contact {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
+.footer__links li {
+  border-bottom: 1px solid var(--footer-line);
+}
+
+.footer__links li:first-child {
+  border-top: 1px solid var(--footer-line);
+}
+
 .footer__links a {
+  min-height: 52px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 12px;
+
   color: var(--footer-text);
-  font-size: 14px;
+  font-size: 15px;
+  font-weight: 500;
   text-decoration: none;
-  transition: color 0.2s ease, padding-left 0.2s ease;
+
+  transition: color 0.2s ease;
 }
 
 .footer__link-arrow {
   flex-shrink: 0;
-  color: #7184a2;
-  font-size: 14px;
-  opacity: 0;
-  transform: translate(-4px, 4px);
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  color: #5d7090;
+  font-size: 17px;
+  transition: color 0.2s ease, transform 0.2s ease;
 }
 
 /* Contact */
 
 .footer__contact-intro {
-  margin: -5px 0 22px;
+  margin: -6px 0 20px;
   color: var(--footer-text);
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.8;
 }
 
-.footer__contact {
-  gap: 21px;
+.footer__contact li {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--footer-line);
 }
 
-.footer__contact li {
-  display: flex;
-  align-items: flex-start;
-  gap: 13px;
-  min-width: 0;
+.footer__contact li:first-child {
+  border-top: 1px solid var(--footer-line);
 }
 
 .footer__contact-icon-wrap {
-  width: 39px;
-  height: 39px;
+  width: 46px;
+  height: 46px;
   display: flex;
-  flex: 0 0 39px;
+  flex: 0 0 46px;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(59, 130, 246, 0.25);
-  border-radius: 11px;
-  color: #75a8ff;
-  background: rgba(37, 99, 235, 0.12);
-  font-size: 18px;
+
+  color: #ffffff;
+  background: linear-gradient(135deg, #2864f0, #0ea5c6);
+  border-radius: 50%;
+  box-shadow: 0 8px 20px rgba(40, 100, 240, 0.3);
+
+  font-size: 19px;
 }
 
 .footer__contact li > div {
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  min-width: 0;
-  padding-top: 2px;
+  gap: 3px;
 }
 
 .footer__contact-label {
-  color: #f1f5f9;
+  color: var(--footer-muted);
   font-size: 12px;
-  font-weight: 750;
+  font-weight: 700;
 }
 
 .footer__contact li a {
-  color: var(--footer-text);
-  font-size: 13px;
-  line-height: 1.75;
+  color: #eaf0fb;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.55;
   overflow-wrap: anywhere;
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
-/* Bottom Bar */
+/* ---------- Bottom bar ---------- */
 
 .footer__bottom {
+  position: relative;
+  z-index: 1;
   width: 100%;
   max-width: 1400px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 16px 24px;
+  gap: 14px 24px;
   margin: 0 auto;
-  padding: 23px 0;
-  border-top: 1px solid rgba(148, 163, 184, 0.16);
+  padding: 24px 0;
+  border-top: 1px solid var(--footer-line);
 }
 
 .footer__bottom p {
   margin: 0;
   color: var(--footer-muted);
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.7;
 }
 
-.footer__bottom strong,
-.footer__crafted span {
+.footer__bottom strong {
   color: #e2eaff;
 }
 
-.footer__crafted {
-  display: flex;
+/* Developer credit */
+
+.footer__credit {
+  display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 12px;
+  padding: 7px 16px 7px 8px;
+
+  color: #fff;
+  background: var(--footer-glass);
+  border: 1px solid var(--footer-line);
+  border-radius: 999px;
+  text-decoration: none;
+
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease;
 }
 
-.footer__crafted span {
-  font-weight: 650;
+.footer__credit-avatar {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+
+  color: #fff;
+  background: linear-gradient(135deg, #2864f0, #06b6d4);
+  border-radius: 50%;
+  box-shadow: 0 6px 16px rgba(40, 100, 240, 0.35);
+
+  font-family: "Bricolage Grotesque", system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
 }
 
-.footer__heart {
-  margin: 0 2px;
-  color: #fb6483;
-  animation: footer-heartbeat 1.8s ease-in-out infinite;
+.footer__credit-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  line-height: 1.2;
 }
 
-@keyframes footer-heartbeat {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.16); }
+.footer__credit-text small {
+  color: var(--footer-muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.footer__credit-text strong {
+  color: #fff;
+  font-family: "Bricolage Grotesque", system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+}
+
+.footer__credit-arrow {
+  flex-shrink: 0;
+  color: #6f86ad;
+  font-size: 17px;
+  transition: color 0.2s ease, transform 0.2s ease;
 }
 
 .footer__back-top {
+  min-height: 42px;
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 0;
-  border: 0;
-  color: #b9c8df;
-  background: transparent;
+  gap: 8px;
+  padding: 0 18px;
+
+  color: #c3d2e8;
+  background: var(--footer-glass);
+  border: 1px solid var(--footer-line);
+  border-radius: 999px;
+
   font: inherit;
-  font-size: 12px;
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
-  transition: color 0.2s ease;
+
+  transition:
+    color 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
 }
 
-/* Floating WhatsApp */
+/* ---------- Big wordmark ---------- */
+
+.footer__wordmark {
+  position: relative;
+  z-index: 0;
+  margin: 0 auto;
+  max-width: 1400px;
+  padding-bottom: 8px;
+
+  font-family: "Bricolage Grotesque", system-ui, sans-serif;
+  font-size: clamp(56px, 15.5vw, 230px);
+  font-weight: 800;
+  line-height: 0.82;
+  letter-spacing: -0.02em;
+  text-align: center;
+  white-space: nowrap;
+  user-select: none;
+  pointer-events: none;
+
+  color: transparent;
+  background: linear-gradient(
+    180deg,
+    rgba(67, 133, 255, 0.5) 0%,
+    rgba(56, 189, 248, 0.14) 55%,
+    rgba(56, 189, 248, 0) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* ---------- Floating WhatsApp (gol, content nahi dhakta) ---------- */
 
 .footer__whatsapp {
   position: fixed;
-  right: 23px;
-  bottom: 22px;
+  right: 20px;
+  bottom: 20px;
   z-index: 1000;
-  min-height: 55px;
+  width: 58px;
+  height: 58px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 0 17px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 30px;
+
   color: #fff;
   background: linear-gradient(135deg, #25d366, #0da95b);
-  box-shadow: 0 8px 25px rgba(13, 169, 91, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.28);
+  border-radius: 50%;
+  box-shadow: 0 10px 26px rgba(13, 169, 91, 0.38);
   text-decoration: none;
+
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
-.footer__whatsapp-label {
-  font-size: 13px;
-  font-weight: 750;
-}
-
-/* Hover effects sirf mouse wali devices par
-   (touch par hover "chipak" jata tha) */
+/* Hover sirf mouse wali devices par (touch par hover chipak jata hai) */
 
 @media (hover: hover) {
   .footer__social:hover {
     transform: translateY(-4px);
-    border-color: var(--footer-blue);
     color: #fff;
     background: #2864f0;
+    border-color: var(--footer-blue);
   }
 
   .footer__links a:hover {
-    padding-left: 5px;
     color: #fff;
   }
 
   .footer__links a:hover .footer__link-arrow {
-    opacity: 1;
-    transform: translate(0, 0);
+    color: var(--footer-cyan);
+    transform: translate(3px, -3px);
   }
 
   .footer__contact li a:hover {
-    color: #83b1ff;
+    color: #8fbaff;
+  }
+
+  .footer__credit:hover {
+    background: rgba(67, 133, 255, 0.12);
+    border-color: rgba(67, 133, 255, 0.5);
+    transform: translateY(-2px);
+  }
+
+  .footer__credit:hover .footer__credit-arrow {
+    color: var(--footer-cyan);
+    transform: translate(3px, -3px);
   }
 
   .footer__back-top:hover {
     color: #fff;
+    background: #2864f0;
+    border-color: #2864f0;
   }
 
   .footer__whatsapp:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 30px rgba(13, 169, 91, 0.4);
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 14px 32px rgba(13, 169, 91, 0.5);
   }
 }
 
@@ -361,28 +485,29 @@
 .footer a:focus-visible,
 .footer__back-top:focus-visible,
 .footer__whatsapp:focus-visible {
-  outline: 2px solid #83b1ff;
+  outline: 2px solid #8fbaff;
   outline-offset: 3px;
 }
 
-/* Chhoti desktop */
+/* ---------- Chhoti desktop ---------- */
 
 @media (max-width: 1200px) {
   .footer__container {
-    gap: 45px;
+    gap: 48px;
   }
 }
 
-/* Tablet */
+/* ---------- Tablet ---------- */
 
 @media (max-width: 1000px) {
   .footer {
-    padding: 55px 5% 0;
+    padding: 64px 5% 0;
   }
 
   .footer__container {
     grid-template-columns: 1fr 1fr;
-    gap: 45px 35px;
+    gap: 50px 40px;
+    padding-bottom: 52px;
   }
 
   .footer__brand {
@@ -395,113 +520,74 @@
   }
 }
 
-/* Mobile */
+/* ---------- Mobile ---------- */
 
-@media (max-width: 600px) {
+@media (max-width: 700px) {
   .footer {
-    padding: 45px 20px 0;
+    padding: 52px 20px 0;
   }
 
   .footer__container {
     grid-template-columns: 1fr;
-    gap: 35px;
-    padding-bottom: 35px;
+    gap: 42px;
+    padding-bottom: 42px;
   }
 
   .footer__brand {
     grid-column: auto;
+    max-width: none;
   }
 
   .footer__brand-name {
-    font-size: 23px;
+    font-size: 27px;
   }
 
-  .footer__brand-tagline {
-    font-size: 10px;
-    letter-spacing: 1.4px;
-  }
-
-  .footer__text {
-    margin: 16px 0 22px;
-    font-size: 14px;
-  }
-
-  /* Touch-friendly size (44px) */
   .footer__social {
-    width: 44px;
-    height: 44px;
-    font-size: 18px;
+    width: 46px;
+    height: 46px;
+    font-size: 19px;
   }
 
   .footer__heading {
-    font-size: 17px;
+    margin-bottom: 20px;
   }
 
-  .footer__heading-line {
-    margin-bottom: 18px;
-  }
-
-  /* Quick links 2 columns mein: footer chhota, links 44px tap area */
+  /* Quick links 2 columns mein: footer chhota, tap area 52px */
   .footer__links {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0 18px;
+    gap: 0 24px;
   }
 
-  .footer__links a {
-    min-height: 44px;
-    font-size: 14.5px;
-  }
-
-  .footer__link-arrow {
-    display: none;
-  }
-
-  .footer__contact-intro {
-    font-size: 14px;
-  }
-
-  .footer__contact-label {
-    font-size: 13px;
-  }
-
-  .footer__contact li a {
-    font-size: 14px;
+  .footer__links li:nth-child(2) {
+    border-top: 1px solid var(--footer-line);
   }
 
   .footer__bottom {
     align-items: flex-start;
     flex-direction: column;
-    gap: 6px;
-    padding: 20px 0 calc(24px + env(safe-area-inset-bottom));
-  }
-
-  .footer__bottom p {
-    font-size: 13px;
+    gap: 8px;
+    padding: 22px 0 8px;
   }
 
   .footer__back-top {
     min-height: 44px;
-    font-size: 13px;
+    margin-top: 8px;
   }
 
-  /* WhatsApp: sirf icon wali gol button (content nahi dhakti) */
+  .footer__wordmark {
+    padding-bottom: calc(10px + env(safe-area-inset-bottom));
+  }
+
   .footer__whatsapp {
     right: 14px;
     bottom: calc(14px + env(safe-area-inset-bottom));
     width: 54px;
-    min-height: 54px;
     height: 54px;
-    padding: 0;
-    border-radius: 50%;
-  }
-
-  .footer__whatsapp-label {
-    display: none;
   }
 }
 
-/* Chhote phones (320–380px) */
+/* ---------- Chhote phones (320–380px) ---------- */
 
 @media (max-width: 380px) {
   .footer {
@@ -512,9 +598,13 @@
   .footer__links {
     grid-template-columns: minmax(0, 1fr);
   }
+
+  .footer__links li:nth-child(2) {
+    border-top: 0;
+  }
 }
 
-/* Reduced Motion */
+/* ---------- Reduced motion ---------- */
 
 @media (prefers-reduced-motion: reduce) {
   .footer *,

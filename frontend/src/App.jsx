@@ -1,5 +1,5 @@
 
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Outlet } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
 import HeroSection from "./components/HeroSection";
@@ -18,43 +18,74 @@ import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import ProductDetails from "./pages/ProductDetails";
 
+import AdminLogin from "./admin/AdminLogin";
+import AdminLayout from "./admin/AdminLayout";
+import AdminPanel from "./admin/AdminPanel";
+
 import { CartProvider } from "./context/CartContext";
 
 import "./App.css";
 
 function HomePage() {
-  return (
-    <>
-      <HeroSection />
-      <CategorySection />
-      <FeaturedProducts />
-      <WhyChooseUs />
-      <Customerreviews />
-      <FAQSection />
-    </>
-  );
+    return (
+        <>
+            <HeroSection />
+            <CategorySection />
+            <FeaturedProducts />
+            <WhyChooseUs />
+            <Customerreviews />
+            <FAQSection />
+        </>
+    );
+}
+
+function PublicLayout() {
+    return (
+        <main className="site-shell">
+            <Navbar />
+            <Outlet />
+            <Footer />
+        </main>
+    );
 }
 
 export default function App() {
-  return (
-    <CartProvider>
-      <main className="site-shell">
-        <Navbar />
+    return (
+        <CartProvider>
+            <Routes>
+                {/* ADMIN LOGIN */}
+                <Route
+                    path="/admin/login"
+                    element={<AdminLogin />}
+                />
 
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/products" element={<Product />} />
-          <Route path="/repairing" element={<Repairing />} />
-          <Route path="/track-order" element={<Trackorder />} />
-          <Route path="/track-order/:token" element={<Trackorder />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/product/:id" element={<ProductDetails />} />
-        </Routes>
+                {/* PROTECTED ADMIN WORKSPACE */}
+                <Route element={<AdminLayout />}>
+                    <Route
+                        path="/admin/*"
+                        element={<AdminPanel />}
+                    />
+                </Route>
 
-        <Footer />
-      </main>
-    </CartProvider>
-  );
+                {/* PUBLIC WEBSITE */}
+                <Route element={<PublicLayout />}>
+                    <Route index element={<HomePage />} />
+                    <Route path="products" element={<Product />} />
+                    <Route path="repairing" element={<Repairing />} />
+                    <Route path="track-order" element={<Trackorder />} />
+                    <Route
+                        path="track-order/:token"
+                        element={<Trackorder />}
+                    />
+                    <Route path="about" element={<About />} />
+                    <Route path="cart" element={<Cart />} />
+                    <Route path="checkout" element={<Checkout />} />
+                    <Route
+                        path="product/:id"
+                        element={<ProductDetails />}
+                    />
+                </Route>
+            </Routes>
+        </CartProvider>
+    );
 }

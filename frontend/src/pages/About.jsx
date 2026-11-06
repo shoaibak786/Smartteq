@@ -1,10 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { motion, AnimatePresence, animate, useInView, useReducedMotion } from 'motion/react'
+import {
+  motion, AnimatePresence, animate, useInView, useReducedMotion,
+  useMotionValue, useMotionTemplate, useSpring, useScroll, useTransform,
+} from 'motion/react'
 import {
   ShieldCheck, Cpu, Heart, Award, Clock, MapPin, Users, Briefcase,
   Phone, Banknote, Landmark, Smartphone, Wallet, AlertTriangle,
-  CheckCircle2, RefreshCw, Package, Truck, Info,
+  CheckCircle2, RefreshCw, Package, Truck, Info, Sparkles, BadgeCheck,
 } from 'lucide-react'
 import { FaWhatsapp } from 'react-icons/fa'
 
@@ -74,6 +77,49 @@ const exchangeSteps = [
 const focusRing =
   'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400'
 
+const EASE = [0.22, 1, 0.36, 1]
+
+/* ---------- Scroll progress bar (visual only) ---------- */
+function ScrollBar() {
+  const { scrollYProgress } = useScroll()
+  const scaleX = useSpring(scrollYProgress, { stiffness: 120, damping: 24, mass: 0.3 })
+  return (
+    <motion.div
+      aria-hidden="true"
+      style={{ scaleX }}
+      className="fixed inset-x-0 top-0 z-50 h-[3px] origin-left bg-gradient-to-r from-sky-400 via-brand to-sky-300 shadow-[0_0_12px_rgba(56,189,248,0.8)]"
+    />
+  )
+}
+
+/* ---------- Mouse-follow spotlight wrapper (visual only) ---------- */
+function Spot({ children, className = '', glow = 'rgba(56,189,248,0.18)', size = 320, ...rest }) {
+  const reduce = useReducedMotion()
+  const x = useMotionValue(-400)
+  const y = useMotionValue(-400)
+  const bg = useMotionTemplate`radial-gradient(${size}px circle at ${x}px ${y}px, ${glow}, transparent 70%)`
+
+  const onMove = (e) => {
+    if (reduce) return
+    const r = e.currentTarget.getBoundingClientRect()
+    x.set(e.clientX - r.left)
+    y.set(e.clientY - r.top)
+  }
+
+  return (
+    <motion.div {...rest} onMouseMove={onMove} className={`group/spot relative ${className}`}>
+      {!reduce && (
+        <motion.span
+          aria-hidden="true"
+          style={{ background: bg }}
+          className="pointer-events-none absolute inset-0 z-[1] rounded-[inherit] opacity-0 transition-opacity duration-300 group-hover/spot:opacity-100"
+        />
+      )}
+      {children}
+    </motion.div>
+  )
+}
+
 /* ---------- Animated circuit traces (echoes the Smart Teq logo) ---------- */
 function CircuitBg({ className = '' }) {
   const reduce = useReducedMotion()
@@ -107,6 +153,22 @@ function CircuitBg({ className = '' }) {
           transition={{ duration: 2.2, delay: 0.2 + i * 0.25, ease: 'easeInOut' }}
         />
       ))}
+      {/* data pulses travelling along the traces */}
+      {!reduce &&
+        traces.map((d, i) => (
+          <motion.path
+            key={`p-${d}`}
+            d={d}
+            stroke="#bae6fd"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeDasharray="36 1400"
+            initial={{ strokeDashoffset: 1436, opacity: 0 }}
+            animate={{ strokeDashoffset: 0, opacity: [0, 1, 1, 0] }}
+            transition={{ duration: 5 + i, repeat: Infinity, delay: 2.4 + i * 0.9, ease: 'linear' }}
+            style={{ filter: 'drop-shadow(0 0 4px #38bdf8)' }}
+          />
+        ))}
       {nodes.map(([cx, cy], i) => (
         <motion.circle
           key={`${cx}-${cy}`}
@@ -115,9 +177,9 @@ function CircuitBg({ className = '' }) {
           r="4"
           fill="#38bdf8"
           initial={{ opacity: reduce ? 1 : 0 }}
-          whileInView={{ opacity: 1 }}
+          whileInView={reduce ? { opacity: 1 } : { opacity: [0, 1, 0.45, 1] }}
           viewport={{ once: true }}
-          transition={{ delay: 1.2 + i * 0.15 }}
+          transition={{ delay: 1.2 + i * 0.15, duration: 2.4, repeat: reduce ? 0 : Infinity, repeatType: 'mirror' }}
         />
       ))}
     </svg>
@@ -156,7 +218,7 @@ function Line({ children, delay = 0, className = '' }) {
         className={`block ${className}`}
         initial={{ y: '110%' }}
         animate={{ y: 0 }}
-        transition={{ duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.8, delay, ease: EASE }}
       >
         {children}
       </motion.span>
@@ -167,14 +229,29 @@ function Line({ children, delay = 0, className = '' }) {
 /* ---------- Vertical step timeline (real sequence, so numbers make sense) ---------- */
 function Steps({ items }) {
   return (
-    <ol className="relative space-y-5 border-l border-brand/25 pl-9">
+    <ol className="relative space-y-5 border-l border-brand/15 pl-9">
+      <motion.span
+        aria-hidden="true"
+        initial={{ scaleY: 0 }}
+        whileInView={{ scaleY: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 1.2, ease: EASE }}
+        className="absolute -left-px top-0 h-full w-0.5 origin-top bg-gradient-to-b from-brand to-sky-400"
+      />
       {items.map((step, i) => (
-        <li key={step} className="relative text-sm leading-relaxed text-slate-700">
-          <span className="absolute -left-[3.15rem] top-0 flex h-8 w-8 items-center justify-center rounded-full bg-brand text-xs font-bold text-white ring-4 ring-white">
+        <motion.li
+          key={step}
+          initial={{ opacity: 0, x: -12 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.45, delay: 0.1 + i * 0.1 }}
+          className="relative text-sm leading-relaxed text-slate-700"
+        >
+          <span className="absolute -left-[3.15rem] top-0 flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-brand to-sky-500 text-xs font-bold text-white shadow-md shadow-brand/30 ring-4 ring-white">
             {i + 1}
           </span>
           {step}
-        </li>
+        </motion.li>
       ))}
     </ol>
   )
@@ -186,6 +263,14 @@ function Heading({ title, text, light = false, className = '' }) {
       <h2 className={`font-display text-3xl font-bold tracking-tight md:text-5xl ${light ? 'text-white' : 'text-ink'}`}>
         {title}
       </h2>
+      <motion.span
+        aria-hidden="true"
+        initial={{ scaleX: 0 }}
+        whileInView={{ scaleX: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8, ease: EASE }}
+        className="mt-4 block h-1 w-16 origin-left rounded-full bg-gradient-to-r from-brand to-sky-400"
+      />
       {text && (
         <p className={`mt-4 max-w-xl leading-relaxed ${light ? 'text-blue-200' : 'text-slate-600'}`}>{text}</p>
       )}
@@ -198,33 +283,87 @@ export default function About() {
   const [tab, setTab] = useState('refund')
   const [imgOk, setImgOk] = useState(true)
 
+  const reduce = useReducedMotion()
+
+  // hero: spotlight + 3D tilt (visual only)
+  const hx = useMotionValue(-500)
+  const hy = useMotionValue(-500)
+  const heroGlow = useMotionTemplate`radial-gradient(520px circle at ${hx}px ${hy}px, rgba(56,189,248,0.16), transparent 70%)`
+  const tx = useSpring(useMotionValue(0), { stiffness: 120, damping: 16 })
+  const ty = useSpring(useMotionValue(0), { stiffness: 120, damping: 16 })
+  const rotateY = useTransform(tx, [-0.5, 0.5], [-9, 9])
+  const rotateX = useTransform(ty, [-0.5, 0.5], [7, -7])
+
+  const onHeroMove = (e) => {
+    if (reduce) return
+    const r = e.currentTarget.getBoundingClientRect()
+    hx.set(e.clientX - r.left)
+    hy.set(e.clientY - r.top)
+  }
+  const onTilt = (e) => {
+    if (reduce) return
+    const r = e.currentTarget.getBoundingClientRect()
+    tx.set((e.clientX - r.left) / r.width - 0.5)
+    ty.set((e.clientY - r.top) / r.height - 0.5)
+  }
+  const resetTilt = () => {
+    tx.set(0)
+    ty.set(0)
+  }
+
   return (
     <main className="overflow-x-hidden bg-[#F4F7FE] font-sans text-slate-700">
+      <ScrollBar />
+
       {/* ---------------- HERO ---------------- */}
       <section
-        className="relative isolate px-4 pb-32 pt-20 text-white md:pt-28"
+        onMouseMove={onHeroMove}
+        className="relative isolate overflow-hidden px-4 pb-32 pt-20 text-white md:pt-28"
         style={{
           background:
             'radial-gradient(60% 70% at 85% 10%, rgba(30,111,217,0.55), transparent 65%), linear-gradient(180deg, #050B1F 0%, #0B2A5B 100%)',
         }}
       >
         <CircuitBg />
+        {!reduce && (
+          <motion.div aria-hidden="true" style={{ background: heroGlow }} className="pointer-events-none absolute inset-0 -z-[1]" />
+        )}
+        {!reduce && (
+          <motion.div
+            aria-hidden="true"
+            className="pointer-events-none absolute -left-32 top-1/3 h-96 w-96 rounded-full bg-brand/30 blur-3xl"
+            animate={{ x: [0, 70, 0], y: [0, -40, 0] }}
+            transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
+          />
+        )}
 
         <div className="relative mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-[1.1fr_0.9fr]">
           <div>
             <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
               className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-sm text-blue-100 backdrop-blur"
             >
-              <span className="h-2 w-2 rounded-full bg-sky-400" />
+              <span className="relative flex h-2 w-2">
+                {!reduce && <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400/80" />}
+                <span className="relative h-2 w-2 rounded-full bg-sky-400" />
+              </span>
               IT solutions & technical services, Lahore
             </motion.p>
 
             <h1 className="mt-6 font-display text-5xl font-extrabold leading-[1.02] tracking-tight md:text-7xl">
               <Line delay={0.15}>Smarter Technology.</Line>
-              <Line delay={0.3} className="text-white/50">Better Tomorrow.</Line>
+              <Line delay={0.3} className="text-white/50">
+                <motion.span
+                  className="inline-block bg-gradient-to-r from-white/40 via-sky-300 to-white/40 bg-clip-text text-transparent"
+                  style={{ backgroundSize: '200% auto' }}
+                  animate={reduce ? undefined : { backgroundPosition: ['0% center', '200% center'] }}
+                  transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
+                >
+                  Better Tomorrow.
+                </motion.span>
+              </Line>
             </h1>
 
             <motion.p
@@ -245,13 +384,14 @@ export default function About() {
             >
               <a
                 href={WHATSAPP}
-                className={`inline-flex items-center gap-2 rounded-full bg-sky-400 px-7 py-3.5 font-semibold text-ink! shadow-lg shadow-sky-500/30 transition hover:bg-sky-300 ${focusRing}`}
+                className={`group/btn relative inline-flex items-center gap-2 overflow-hidden rounded-full bg-sky-400 px-7 py-3.5 font-semibold text-ink! shadow-lg shadow-sky-500/30 transition duration-300 hover:-translate-y-0.5 hover:bg-sky-300 hover:shadow-xl hover:shadow-sky-400/40 ${focusRing}`}
               >
-                <FaWhatsapp size={20} /> Chat on WhatsApp
+                <span aria-hidden="true" className="absolute inset-y-0 -left-1/3 w-1/4 -skew-x-12 bg-white/50 blur-sm transition-all duration-700 group-hover/btn:left-[130%]" />
+                <FaWhatsapp size={20} className="relative" /> <span className="relative">Chat on WhatsApp</span>
               </a>
               <a
                 href={`tel:${PHONE.replace(/\s/g, '')}`}
-                className={`inline-flex items-center gap-2 rounded-full border border-white/25 px-7 py-3.5 font-semibold text-white! transition hover:bg-white/10 ${focusRing}`}
+                className={`inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/5 px-7 py-3.5 font-semibold text-white! backdrop-blur transition duration-300 hover:-translate-y-0.5 hover:border-sky-300/60 hover:bg-white/10 ${focusRing}`}
               >
                 <Phone size={18} /> {PHONE}
               </a>
@@ -262,41 +402,82 @@ export default function About() {
           <motion.div
             initial={{ opacity: 0, scale: 0.94 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.4, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            className="relative"
+            transition={{ delay: 0.4, duration: 0.8, ease: EASE }}
+            className="relative [perspective:1200px]"
+            onMouseMove={onTilt}
+            onMouseLeave={resetTilt}
           >
-            <div className="absolute -inset-3 rounded-[2.2rem] bg-gradient-to-br from-sky-400/40 to-brand/10 blur-2xl" />
-            <div className="relative aspect-[4/3] overflow-hidden rounded-[2rem] border border-white/15 bg-white/5 shadow-2xl">
-              {imgOk ? (
-                <img
-                  src="/about.jpg"
-                  alt="The Smart Teq team at work"
-                  onError={() => setImgOk(false)}
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-brand-dark to-brand">
-                  <Cpu size={96} className="text-sky-300/70" strokeWidth={1} />
+            <motion.div style={reduce ? undefined : { rotateX, rotateY, transformStyle: 'preserve-3d' }} className="relative">
+              <div className="absolute -inset-3 rounded-[2.2rem] bg-gradient-to-br from-sky-400/40 to-brand/10 blur-2xl" />
+              <div className="relative aspect-[4/3] overflow-hidden rounded-[2rem] border border-white/20 bg-white/5 shadow-2xl shadow-black/40">
+                {imgOk ? (
+                  <img
+                    src="/about.jpg"
+                    alt="The Smart Teq team at work"
+                    onError={() => setImgOk(false)}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-brand-dark to-brand">
+                    <Cpu size={96} className="text-sky-300/70" strokeWidth={1} />
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent" />
+                {!reduce && (
+                  <motion.span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-y-0 w-1/4 -skew-x-12 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                    initial={{ left: '-30%' }}
+                    animate={{ left: '130%' }}
+                    transition={{ duration: 2.4, delay: 1.5, repeat: Infinity, repeatDelay: 5, ease: 'easeInOut' }}
+                  />
+                )}
+                <div className="absolute bottom-4 left-4 flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-sm font-medium text-white backdrop-blur-md">
+                  <MapPin size={16} /> Lahore, Pakistan
                 </div>
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent" />
-              <div className="absolute bottom-4 left-4 flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-sm font-medium text-white backdrop-blur-md">
-                <MapPin size={16} /> Lahore, Pakistan
               </div>
-            </div>
+
+              {/* floating glass chips */}
+              <motion.div
+                aria-hidden="true"
+                style={reduce ? undefined : { translateZ: 60 }}
+                animate={reduce ? undefined : { y: [0, -8, 0] }}
+                transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+                className="absolute -right-3 -top-4 flex items-center gap-2 rounded-2xl border border-white/20 bg-white/15 px-3.5 py-2 text-xs font-semibold text-white shadow-xl backdrop-blur-md sm:-right-6"
+              >
+                <BadgeCheck size={16} className="text-sky-300" /> Genuine parts
+              </motion.div>
+              <motion.div
+                aria-hidden="true"
+                style={reduce ? undefined : { translateZ: 80 }}
+                animate={reduce ? undefined : { y: [0, 9, 0] }}
+                transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+                className="absolute -bottom-5 right-6 flex items-center gap-2 rounded-2xl border border-white/20 bg-white/15 px-3.5 py-2 text-xs font-semibold text-white shadow-xl backdrop-blur-md"
+              >
+                <Sparkles size={16} className="text-sky-300" /> Fast, honest support
+              </motion.div>
+            </motion.div>
           </motion.div>
         </div>
       </section>
 
       {/* ---------------- STATS ---------------- */}
       <section className="relative z-10 -mt-16 px-4">
-        <div className="mx-auto grid max-w-5xl grid-cols-2 overflow-hidden rounded-3xl bg-white shadow-2xl shadow-brand-dark/10 md:grid-cols-4">
+        <Spot
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, ease: EASE }}
+          glow="rgba(30,111,217,0.10)"
+          size={420}
+          className="mx-auto grid max-w-5xl grid-cols-2 overflow-hidden rounded-3xl bg-white shadow-2xl shadow-brand-dark/15 ring-1 ring-brand/10 md:grid-cols-4"
+        >
           {stats.map((s) => (
             <div
               key={s.label}
-              className="flex items-center gap-4 border-b border-r border-slate-100 p-6 last:border-r-0 md:border-b-0"
+              className="group relative z-[2] flex items-center gap-4 border-b border-r border-slate-100 p-6 last:border-r-0 md:border-b-0"
             >
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand/10 text-brand">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand/10 text-brand transition duration-300 group-hover:rotate-6 group-hover:scale-110 group-hover:bg-brand group-hover:text-white group-hover:shadow-lg group-hover:shadow-brand/30">
                 <s.icon size={22} />
               </span>
               <div>
@@ -307,7 +488,7 @@ export default function About() {
               </div>
             </div>
           ))}
-        </div>
+        </Spot>
       </section>
 
       {/* ---------------- VALUES (bento) ---------------- */}
@@ -325,33 +506,35 @@ export default function About() {
                 light: 'border border-slate-200 bg-white text-ink',
               }
               return (
-                <motion.article
+                <Spot
                   key={v.title}
+                  glow={v.tone === 'light' ? 'rgba(30,111,217,0.12)' : 'rgba(56,189,248,0.22)'}
                   initial={{ opacity: 0, y: 24 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: '-60px' }}
+                  whileHover={reduce ? undefined : { y: -6 }}
                   transition={{ duration: 0.5, delay: i * 0.08 }}
                   style={v.tone === 'brand' ? { background: 'linear-gradient(135deg,#1e6fd9,#0b2a5b)' } : undefined}
-                  className={`group relative flex min-h-56 flex-col justify-between overflow-hidden rounded-3xl p-8 ${tones[v.tone]} ${v.wide ? 'lg:col-span-2' : ''}`}
+                  className={`group flex min-h-56 flex-col justify-between overflow-hidden rounded-3xl p-8 shadow-lg shadow-brand-dark/5 transition-shadow duration-300 hover:shadow-2xl hover:shadow-brand/20 ${tones[v.tone]} ${v.wide ? 'lg:col-span-2' : ''}`}
                 >
                   <v.icon
                     aria-hidden="true"
                     size={140}
                     strokeWidth={0.75}
-                    className={`absolute -right-6 -top-6 transition duration-500 group-hover:scale-110 ${v.tone === 'light' ? 'text-brand/10' : 'text-white/10'}`}
+                    className={`absolute -right-6 -top-6 transition duration-500 group-hover:rotate-6 group-hover:scale-110 ${v.tone === 'light' ? 'text-brand/10' : 'text-white/10'}`}
                   />
                   <span
-                    className={`relative flex h-12 w-12 items-center justify-center rounded-2xl ${v.tone === 'light' ? 'bg-brand text-white' : 'bg-white/15 text-white'}`}
+                    className={`relative z-[2] flex h-12 w-12 items-center justify-center rounded-2xl transition duration-300 group-hover:scale-110 ${v.tone === 'light' ? 'bg-brand text-white shadow-lg shadow-brand/30' : 'bg-white/15 text-white'}`}
                   >
                     <v.icon size={22} />
                   </span>
-                  <div className="relative mt-10">
+                  <div className="relative z-[2] mt-10">
                     <h3 className="font-display text-2xl font-bold">{v.title}</h3>
                     <p className={`mt-2 max-w-md leading-relaxed ${v.tone === 'light' ? 'text-slate-600' : 'text-blue-100'}`}>
                       {v.text}
                     </p>
                   </div>
-                </motion.article>
+                </Spot>
               )
             })}
           </div>
@@ -370,25 +553,26 @@ export default function About() {
           />
           <div className="space-y-3">
             {payments.map((p, i) => (
-              <motion.div
+              <Spot
                 key={p.title}
                 initial={{ opacity: 0, x: 24 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true, margin: '-40px' }}
+                whileHover={reduce ? undefined : { x: -6 }}
                 transition={{ duration: 0.5, delay: i * 0.08 }}
-                className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur transition hover:border-sky-400/40 hover:bg-white/10 sm:flex-row sm:items-center"
+                className="group flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur transition-colors duration-300 hover:border-sky-400/50 hover:bg-white/10 sm:flex-row sm:items-center"
               >
-                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-sky-400/15 text-sky-300">
+                <span className="relative z-[2] flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-sky-400/15 text-sky-300 transition duration-300 group-hover:scale-110 group-hover:bg-sky-400 group-hover:text-ink group-hover:shadow-lg group-hover:shadow-sky-400/40">
                   <p.icon size={22} />
                 </span>
-                <div className="flex-1">
+                <div className="relative z-[2] flex-1">
                   <h3 className="font-display text-lg font-bold">{p.title}</h3>
                   <p className="mt-0.5 text-sm text-blue-200">{p.text}</p>
                 </div>
-                <span className="w-fit rounded-full bg-emerald-300/15 px-3 py-1 text-xs font-semibold text-emerald-300">
+                <span className="relative z-[2] w-fit rounded-full bg-emerald-300/15 px-3 py-1 text-xs font-semibold text-emerald-300">
                   {p.tag}
                 </span>
-              </motion.div>
+              </Spot>
             ))}
           </div>
         </div>
@@ -402,7 +586,7 @@ export default function About() {
               title="Refunds and exchanges"
               text="We stand behind everything we sell. Here is exactly how returns work."
             />
-            <div role="tablist" aria-label="Policy" className="relative flex w-fit rounded-full bg-white p-1.5 shadow-md">
+            <div role="tablist" aria-label="Policy" className="relative flex w-fit rounded-full bg-white p-1.5 shadow-lg shadow-brand/10 ring-1 ring-brand/10">
               {[
                 { id: 'refund', label: '7-day refund' },
                 { id: 'exchange', label: 'Exchange' },
@@ -419,7 +603,7 @@ export default function About() {
                   {tab === t.id && (
                     <motion.span
                       layoutId="policy-pill"
-                      className="absolute inset-0 rounded-full bg-brand"
+                      className="absolute inset-0 rounded-full bg-gradient-to-r from-brand to-sky-500 shadow-md shadow-brand/40"
                       transition={{ type: 'spring', stiffness: 400, damping: 32 }}
                     />
                   )}
@@ -429,7 +613,14 @@ export default function About() {
             </div>
           </div>
 
-          <div className="mt-10 rounded-[2rem] border border-slate-200 bg-white p-6 shadow-xl shadow-brand-dark/5 md:p-10">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.7, ease: EASE }}
+            className="mt-10 rounded-[2rem] bg-gradient-to-br from-brand/30 via-white to-sky-300/30 p-px shadow-2xl shadow-brand-dark/10"
+          >
+          <div className="rounded-[calc(2rem-1px)] bg-white p-6 md:p-10">
             <AnimatePresence mode="wait">
               {tab === 'refund' ? (
                 <motion.div
@@ -447,14 +638,14 @@ export default function About() {
                       <b className="text-ink">7 days of receiving your order</b>, subject to the conditions on this page.
                     </p>
                     <Steps items={refundSteps} />
-                    <div className="mt-8 flex gap-3 rounded-2xl bg-blue-50 p-4 text-sm text-slate-600">
+                    <div className="mt-8 flex gap-3 rounded-2xl border border-brand/10 bg-blue-50 p-4 text-sm text-slate-600">
                       <Info className="shrink-0 text-brand" size={18} />
                       Refunds are issued via the same payment method used at checkout. Bank transfers may take 3–5 working days to reflect.
                     </div>
                   </div>
 
                   <div className="space-y-5">
-                    <div className="rounded-2xl bg-emerald-50 p-6">
+                    <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-6 transition duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-emerald-200/60">
                       <h3 className="flex items-center gap-2 font-display text-lg font-bold text-emerald-800">
                         <CheckCircle2 size={20} /> Eligible for refund
                       </h3>
@@ -466,7 +657,7 @@ export default function About() {
                         ))}
                       </ul>
                     </div>
-                    <div className="rounded-2xl bg-rose-50 p-6">
+                    <div className="rounded-2xl border border-rose-100 bg-rose-50 p-6 transition duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-rose-200/60">
                       <h3 className="flex items-center gap-2 font-display text-lg font-bold text-rose-700">
                         <AlertTriangle size={20} /> Not refundable
                       </h3>
@@ -497,8 +688,8 @@ export default function About() {
                     </p>
                     <div className="grid gap-3 sm:grid-cols-2">
                       {exchangeRules.map((r) => (
-                        <div key={r.text} className="rounded-2xl bg-[#F4F7FE] p-4 text-sm leading-relaxed text-slate-600">
-                          <r.icon className="mb-3 text-brand" size={20} />
+                        <div key={r.text} className="group rounded-2xl border border-transparent bg-[#F4F7FE] p-4 text-sm leading-relaxed text-slate-600 transition duration-300 hover:-translate-y-1 hover:border-brand/20 hover:bg-white hover:shadow-lg hover:shadow-brand/10">
+                          <r.icon className="mb-3 text-brand transition duration-300 group-hover:scale-110" size={20} />
                           {r.text}
                         </div>
                       ))}
@@ -516,6 +707,7 @@ export default function About() {
               )}
             </AnimatePresence>
           </div>
+          </motion.div>
         </div>
       </section>
 
@@ -525,7 +717,29 @@ export default function About() {
         style={{ background: 'linear-gradient(135deg, #1e6fd9 0%, #0b2a5b 100%)' }}
       >
         <CircuitBg className="opacity-50" />
-        <div className="relative mx-auto max-w-2xl">
+        {!reduce && (
+          <>
+            <motion.div
+              aria-hidden="true"
+              className="pointer-events-none absolute -left-24 top-0 h-80 w-80 rounded-full bg-sky-300/25 blur-3xl"
+              animate={{ x: [0, 60, 0], y: [0, 40, 0] }}
+              transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
+            />
+            <motion.div
+              aria-hidden="true"
+              className="pointer-events-none absolute -right-24 bottom-0 h-96 w-96 rounded-full bg-brand-dark/60 blur-3xl"
+              animate={{ x: [0, -50, 0], y: [0, -30, 0] }}
+              transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
+            />
+          </>
+        )}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, ease: EASE }}
+          className="relative mx-auto max-w-2xl"
+        >
           <h2 className="font-display text-4xl font-extrabold tracking-tight md:text-6xl">Have a question?</h2>
           <p className="mx-auto mt-5 max-w-lg text-lg text-blue-100">
             Whether it’s about a repair, a refund, or advice on the right product, message us and we’ll reply as soon as we can.
@@ -533,24 +747,26 @@ export default function About() {
           <div className="mt-10 flex flex-wrap justify-center gap-3">
             <a
               href={WHATSAPP}
-              className={`inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 font-semibold text-ink! transition hover:bg-blue-50 ${focusRing}`}
+              className={`group/btn relative inline-flex items-center gap-2 overflow-hidden rounded-full bg-white px-7 py-3.5 font-semibold text-ink! shadow-xl shadow-black/20 transition duration-300 hover:-translate-y-0.5 hover:bg-blue-50 ${focusRing}`}
             >
-              <FaWhatsapp size={20} /> WhatsApp us
+              <span aria-hidden="true" className="absolute inset-y-0 -left-1/3 w-1/4 -skew-x-12 bg-sky-300/50 blur-sm transition-all duration-700 group-hover/btn:left-[130%]" />
+              {!reduce && <span aria-hidden="true" className="absolute inset-0 animate-ping rounded-full bg-white/30 [animation-duration:2.6s]" />}
+              <FaWhatsapp size={20} className="relative text-emerald-600" /> <span className="relative">WhatsApp us</span>
             </a>
             <a
               href={`tel:${PHONE.replace(/\s/g, '')}`}
-              className={`inline-flex items-center gap-2 rounded-full border border-white/40 px-7 py-3.5 font-semibold text-white! transition hover:bg-white/10 ${focusRing}`}
+              className={`inline-flex items-center gap-2 rounded-full border border-white/40 px-7 py-3.5 font-semibold text-white! transition duration-300 hover:-translate-y-0.5 hover:bg-white/10 ${focusRing}`}
             >
               <Phone size={18} /> {PHONE}
             </a>
             <Link
               to="/contact"
-              className={`inline-flex items-center gap-2 rounded-full border border-white/40 px-7 py-3.5 font-semibold text-white! transition hover:bg-white/10 ${focusRing}`}
+              className={`inline-flex items-center gap-2 rounded-full border border-white/40 px-7 py-3.5 font-semibold text-white! transition duration-300 hover:-translate-y-0.5 hover:bg-white/10 ${focusRing}`}
             >
               Send a message
             </Link>
           </div>
-        </div>
+        </motion.div>
       </section>
     </main>
   )

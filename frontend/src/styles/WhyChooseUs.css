@@ -1,44 +1,88 @@
-/* ===== Why Choose Us Section ===== */
+/* =========================================
+   WHYCHOOSEUS.CSS
+   Dark section: baqi sections light hain, ye beech mein contrast deta hai.
+   Har card ka rang --accent se aata hai.
+========================================= */
 
 .why-choose-section {
-  --why-blue: #2864f0;
-
   position: relative;
   overflow: hidden;
-  padding: 82px 5% 75px;
-  background-color: #fff;
+  padding: 100px 5% 100px;
+  color: #fff;
+  background-color: #0a1020;
   background-image:
-    linear-gradient(rgba(40, 100, 240, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(40, 100, 240, 0.035) 1px, transparent 1px);
+    linear-gradient(rgba(120, 160, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(120, 160, 255, 0.045) 1px, transparent 1px);
   background-size: 57px 57px;
 }
 
+/* Peeche ki halki roshni ke gole */
+.why-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  pointer-events: none;
+}
+
+.why-orb-one {
+  top: -160px;
+  left: -120px;
+  width: 440px;
+  height: 440px;
+  background: rgba(40, 100, 240, 0.32);
+}
+
+.why-orb-two {
+  right: -140px;
+  bottom: -160px;
+  width: 460px;
+  height: 460px;
+  background: rgba(124, 58, 237, 0.26);
+}
+
+/* ---------- HEADING ---------- */
 .why-choose-heading {
-  margin: 0 auto 66px;
+  position: relative;
+  max-width: 900px;
+  margin: 0 auto 64px;
   text-align: center;
 }
 
 .why-choose-eyebrow {
-  display: block;
-  margin-bottom: 16px;
-  color: var(--why-blue);
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 22px;
+  padding: 8px 16px;
+  color: #9dbfff;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(157, 191, 255, 0.25);
+  border-radius: 30px;
   font-size: 14px;
-  font-weight: 750;
-  letter-spacing: 2px;
+  font-weight: 600;
+}
+
+.why-choose-eyebrow i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #5b9bff;
+  box-shadow: 0 0 0 4px rgba(91, 155, 255, 0.22);
 }
 
 .why-choose-heading h2 {
-  margin: 0 0 15px;
-  color: #111827;
-  font-size: clamp(32px, 4vw, 58px);
-  font-weight: 760;
-  line-height: 1.15;
-  letter-spacing: -1.8px;
+  margin: 0 0 18px;
+  color: #fff;
+  font-family: "Bricolage Grotesque", "Inter", sans-serif;
+  font-size: clamp(34px, 4.4vw, 64px);
+  font-weight: 800;
+  line-height: 1.06;
+  letter-spacing: -0.04em;
   text-wrap: balance;
 }
 
 .why-choose-heading h2 span {
-  color: var(--why-blue);
+  color: #5b9bff;
 }
 
 .why-choose-heading > p {
@@ -47,140 +91,185 @@
   justify-content: center;
   gap: 13px;
   margin: 0;
-  color: #64748b;
+  color: #a7b3c7;
   font-size: 18px;
   line-height: 1.6;
 }
 
 .why-choose-heading > p i {
+  flex: 0 0 7px;
   width: 7px;
   height: 7px;
-  flex: 0 0 7px;
   border-radius: 50%;
-  background: #a5bdfd;
+  background: #3b5bb0;
 }
 
-/* Service cards */
+/* ---------- GRID ---------- */
 .why-choose-grid {
-  width: 100%;
-  max-width: 1440px;
+  position: relative;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 24px;
+  width: 100%;
+  max-width: 1400px;
   margin: 0 auto;
 }
 
+/* ---------- CARD ---------- */
 .service-card {
+  --accent: #4c9cff;
+  --mx: 50%;
+  --my: 0%;
+
   position: relative;
   min-width: 0;
-  min-height: 265px;
-  padding: 34px 33px 28px;
+  min-height: 290px;
+  padding: 36px 32px 30px;
   overflow: hidden;
-  border: 1px solid #edf0f5;
-  border-radius: 20px;
-  background:
-    radial-gradient(
-      circle at 100% 0%,
-      rgba(237, 243, 255, 0.6),
-      transparent 36%
-    ),
-    #fff;
-  box-shadow: 0 3px 12px rgba(15, 23, 42, 0.025);
-  transition:
-    transform 0.3s ease,
-    border-color 0.3s ease,
-    box-shadow 0.3s ease;
+  background: linear-gradient(
+    160deg,
+    rgba(255, 255, 255, 0.07),
+    rgba(255, 255, 255, 0.02)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 26px;
+  transition: transform 0.35s ease, border-color 0.35s ease,
+    box-shadow 0.35s ease;
 }
 
-/* Gradient icon boxes */
+.service-blue {
+  --accent: #4c9cff;
+}
+
+.service-cyan {
+  --accent: #22d3ee;
+}
+
+.service-indigo {
+  --accent: #818cf8;
+}
+
+.service-violet {
+  --accent: #b18cff;
+}
+
+/* Upar ki rangeen line */
+.service-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 28px;
+  right: 28px;
+  height: 2px;
+  border-radius: 0 0 4px 4px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0.7;
+}
+
+/* Mouse ke peeche chalne wali roshni */
+.service-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    320px circle at var(--mx) var(--my),
+    color-mix(in srgb, var(--accent) 22%, transparent),
+    transparent 65%
+  );
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+
+.service-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Icon */
 .service-icon {
-  width: 68px;
-  height: 68px;
   display: grid;
   place-items: center;
-  margin-bottom: 27px;
-  border-radius: 15px;
+  width: 68px;
+  height: 68px;
+  margin-bottom: 28px;
   color: #fff;
-  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.18);
-  transition: transform 0.3s ease;
-}
-
-.service-blue .service-icon {
-  background: linear-gradient(135deg, #4c9cff, #2163ff);
-}
-
-.service-cyan .service-icon {
-  background: linear-gradient(135deg, #00baf2, #2783ff);
-}
-
-.service-indigo .service-icon {
-  background: linear-gradient(135deg, #367dff, #6452ff);
-}
-
-.service-violet .service-icon {
-  background: linear-gradient(135deg, #7778ff, #2864f0);
+  background: linear-gradient(
+    135deg,
+    var(--accent),
+    color-mix(in srgb, var(--accent) 55%, #2864f0)
+  );
+  border-radius: 20px;
+  box-shadow: 0 10px 30px color-mix(in srgb, var(--accent) 45%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  transition: transform 0.35s ease;
 }
 
 /* Text */
 .service-card h3 {
-  margin: 0 0 11px;
-  color: #111827;
-  font-size: 20px;
+  margin: 0 0 12px;
+  color: #fff;
+  font-size: 21px;
   font-weight: 700;
-  line-height: 1.4;
-  letter-spacing: -0.5px;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
 }
 
 .service-card > p {
   margin: 0;
-  color: #64748b;
+  color: #a7b3c7;
   font-size: 16px;
   line-height: 1.7;
 }
 
-/* Small decorative line */
 .service-accent {
   display: block;
-  width: 39px;
+  width: 40px;
   height: 3px;
-  margin-top: 24px;
+  margin-top: 26px;
+  background: var(--accent);
   border-radius: 5px;
-  background: linear-gradient(90deg, #60a5fa, #818cf8);
-  transition: width 0.3s ease;
+  transition: width 0.35s ease;
 }
 
-/* Hover effects sirf mouse wali devices par
-   (touch par hover "chipak" jata tha) */
+/* ---------- HOVER (sirf mouse wali devices par) ---------- */
 @media (hover: hover) {
   .service-card:hover {
-    transform: translateY(-5px);
-    border-color: #dce6ff;
-    box-shadow: 0 15px 35px rgba(15, 23, 42, 0.07);
+    transform: translateY(-8px);
+    border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+    box-shadow: 0 28px 55px color-mix(in srgb, var(--accent) 20%, transparent);
+  }
+
+  .service-card:hover::after {
+    opacity: 1;
   }
 
   .service-card:hover .service-icon {
-    transform: translateY(-2px) scale(1.04);
+    transform: translateY(-3px) scale(1.06) rotate(-3deg);
   }
 
   .service-card:hover .service-accent {
-    width: 58px;
+    width: 72px;
   }
 }
 
-/* Chhoti desktop: 4 cards mein text tang na ho */
+/* =========================================
+   CHHOTI DESKTOP (1350px aur neeche)
+========================================= */
 @media (max-width: 1350px) {
   .why-choose-grid {
     gap: 20px;
   }
 
   .service-card {
-    padding: 30px 26px 26px;
+    min-height: 275px;
+    padding: 32px 26px 28px;
   }
 
   .service-icon {
     width: 62px;
     height: 62px;
-    margin-bottom: 22px;
+    margin-bottom: 24px;
   }
 
   .service-card h3 {
@@ -193,12 +282,11 @@
 }
 
 /* =========================================
-   TABLET (601px - 1150px)
-   2 x 2 cards, bada heading, barabar spacing
+   TABLET (1150px aur neeche): 2 x 2 cards
 ========================================= */
 @media (max-width: 1150px) {
   .why-choose-section {
-    padding: 65px 4% 60px;
+    padding: 76px 4% 80px;
   }
 
   .why-choose-grid {
@@ -207,13 +295,11 @@
   }
 
   .why-choose-heading {
-    margin-bottom: 45px;
+    margin-bottom: 46px;
   }
 
-  /* Tablet par heading thoda bada */
   .why-choose-heading h2 {
-    font-size: clamp(34px, 4.8vw, 50px);
-    letter-spacing: -1.5px;
+    font-size: clamp(34px, 5.2vw, 52px);
   }
 
   .why-choose-heading > p {
@@ -221,14 +307,8 @@
   }
 
   .service-card {
-    min-height: 245px;
-    padding: 30px;
-  }
-
-  .service-icon {
-    width: 68px;
-    height: 68px;
-    margin-bottom: 22px;
+    min-height: 250px;
+    padding: 32px 30px;
   }
 
   .service-card h3 {
@@ -253,7 +333,7 @@
   }
 
   .service-card {
-    padding: 26px 24px;
+    padding: 28px 24px;
   }
 }
 
@@ -262,30 +342,28 @@
 ========================================= */
 @media (max-width: 600px) {
   .why-choose-section {
-    padding: 48px 20px;
+    padding: 58px 20px 62px;
     background-size: 38px 38px;
   }
 
   .why-choose-heading {
-    margin-bottom: 28px;
+    margin-bottom: 30px;
   }
 
   .why-choose-eyebrow {
-    margin-bottom: 12px;
-    font-size: 12px;
-    letter-spacing: 1.7px;
+    margin-bottom: 16px;
+    padding: 7px 14px;
+    font-size: 13px;
   }
 
   .why-choose-heading h2 {
-    font-size: 32px;
-    letter-spacing: -1.1px;
+    font-size: 34px;
   }
 
-  /* Dots hata do, text center mein sahi wrap ho */
   .why-choose-heading > p {
     display: block;
     padding: 0 4px;
-    font-size: 14.5px;
+    font-size: 15px;
     text-wrap: balance;
   }
 
@@ -302,11 +380,11 @@
   .service-card {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
-    column-gap: 18px;
     align-items: start;
+    column-gap: 18px;
     min-height: auto;
     padding: 22px 20px;
-    border-radius: 16px;
+    border-radius: 22px;
   }
 
   .service-icon {
@@ -315,7 +393,7 @@
     width: 56px;
     height: 56px;
     margin-bottom: 0;
-    border-radius: 13px;
+    border-radius: 16px;
   }
 
   .service-icon svg {
@@ -341,7 +419,7 @@
   }
 }
 
-/* Chhote phones (320–380px) */
+/* Chhote phones (320 - 380px) */
 @media (max-width: 380px) {
   .why-choose-section {
     padding-right: 16px;
@@ -349,7 +427,7 @@
   }
 
   .why-choose-heading h2 {
-    font-size: 28px;
+    font-size: 30px;
   }
 
   .service-card {
@@ -373,5 +451,14 @@
 
   .service-card > p {
     font-size: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .service-card,
+  .service-icon,
+  .service-accent,
+  .service-card::after {
+    transition: none;
   }
 }

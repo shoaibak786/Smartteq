@@ -1,8 +1,6 @@
 /* =========================================
    NAVBAR.CSS
-   Navbar ki saari styling yahin hai
-   (App.css / index.css mein navbar ka kuch nahi)
-   Desktop + Tablet (761px+): poore links | Mobile (760px aur neeche): hamburger
+   Desktop + Tablet (761px+): poore links | Mobile (760px aur neeche): right side drawer
 ========================================= */
 
 /* ---------- STICKY HEADER ---------- */
@@ -18,7 +16,7 @@
 
 /* ---------- NAVBAR BAR ---------- */
 .navbar {
-  position: relative; /* mobile menu isi ke hisaab se align hoga */
+  position: relative;
   display: flex;
   align-items: center;
   gap: 20px;
@@ -95,19 +93,27 @@
   flex: 1;
   align-items: center;
   justify-content: center;
-  gap: clamp(14px, 1.8vw, 34px);
+  gap: clamp(20px, 3vw, 44px);
   white-space: nowrap;
 }
 
 .nav-links > a {
   color: #374151;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 500;
   transition: color 0.2s ease;
 }
 
 .nav-links > a:hover {
   color: var(--blue);
+}
+
+/* Mobile-only parts desktop par hidden */
+.nav-overlay,
+.drawer-head,
+.drawer-footer,
+.nav-link-icon {
+  display: none;
 }
 
 /* ---------- CATEGORIES DROPDOWN ---------- */
@@ -161,7 +167,7 @@
   box-shadow: 0 18px 40px #0f172a18;
 }
 
-/* Hover gap bridge (mouse le jate waqt menu band na ho) */
+/* Hover gap bridge */
 .dropdown-menu::before {
   content: "";
   position: absolute;
@@ -193,7 +199,6 @@
   background: #eff6ff;
 }
 
-/* Loading / empty message */
 .dropdown-menu > span {
   display: block;
   padding: 12px 13px;
@@ -292,8 +297,7 @@
   }
 }
 
-/* ---------- WISHLIST + ACTIONS
-   (abhi Navbar.jsx mein use nahi ho raha) ---------- */
+/* ---------- WISHLIST + ACTIONS (abhi use nahi ho raha) ---------- */
 .nav-actions {
   display: flex;
   align-items: center;
@@ -345,8 +349,6 @@
 
 /* =========================================
    TABLET (761px - 1100px)
-   Desktop jaise saare links, compact size
-   (iPad Pro 1032px, Surface Pro 960px, iPad 768px)
 ========================================= */
 @media (min-width: 761px) and (max-width: 1100px) {
   .navbar {
@@ -372,12 +374,12 @@
   }
 
   .nav-links {
-    gap: 30px; /* links ke beech gap */
+    gap: 30px;
   }
 
   .nav-links > a,
   .nav-dropdown-toggle {
-    font-size: 15px; /* links ka size */
+    font-size: 15px;
   }
 
   .nav-cart {
@@ -391,7 +393,6 @@
   }
 }
 
-/* Tablet (901px - 1000px): thoda compact taake jagah ban jaye */
 @media (min-width: 901px) and (max-width: 1000px) {
   .brand-copy small {
     display: none;
@@ -407,7 +408,6 @@
   }
 }
 
-/* Chhote tablets (761px - 900px): aur compact taake links ek line mein aayen */
 @media (min-width: 761px) and (max-width: 900px) {
   .brand-copy small {
     display: none;
@@ -427,18 +427,24 @@
   }
 
   .nav-cart > span:last-child {
-    display: none; /* sirf cart icon */
+    display: none;
   }
 }
 
 /* =========================================
    MOBILE (760px aur neeche)
-   Hamburger dikhao, menu default band
+   Right side drawer
 ========================================= */
 @media (max-width: 760px) {
+  .site-header {
+    padding: 12px 12px 4px;
+  }
+
   .navbar {
     gap: 8px;
+    min-height: 65px;
     padding: 10px 14px;
+    border-radius: 18px;
   }
 
   .brand-logo {
@@ -455,7 +461,6 @@
     font-size: 9px;
   }
 
-  /* Cart + hamburger right side par, touch-friendly 44px */
   .nav-cart {
     min-height: 44px;
     gap: 6px;
@@ -478,70 +483,163 @@
     color: var(--blue);
   }
 
-  /* Menu panel: default band, hamburger click par khule */
+  /* ----- Dark overlay ----- */
+  .nav-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1100;
+    display: block;
+    background: rgba(15, 23, 42, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .nav-overlay.overlay-open {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* ----- Drawer panel (right side) ----- */
   .nav-links {
-    position: absolute;
-    top: calc(100% + 8px);
-    left: 0;
+    position: fixed;
+    top: 0;
     right: 0;
-    z-index: 100;
-    display: none;
+    bottom: 0;
+    left: auto;
+    z-index: 1200;
+    display: flex;
     flex: none;
     flex-direction: column;
     align-items: stretch;
     justify-content: flex-start;
-    gap: 2px;
-    padding: 10px;
-    max-height: calc(100vh - 120px);
-    max-height: calc(100dvh - 120px);
+    gap: 4px;
+    width: min(86vw, 340px);
+    height: 100vh;
+    height: 100dvh;
+    padding: 0 14px 14px;
     overflow-y: auto;
+    overscroll-behavior: contain;
     white-space: normal;
     background: #fff;
-    border: 1px solid #e8edf5;
-    border-radius: 16px;
-    box-shadow: 0 16px 35px #0f172a18;
+    border: 0;
+    border-radius: 24px 0 0 24px;
+    box-shadow: -18px 0 50px rgba(15, 23, 42, 0.22);
+    transform: translateX(105%);
+    visibility: hidden;
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+      visibility 0.35s;
   }
 
   .nav-links.nav-open {
+    transform: translateX(0);
+    visibility: visible;
+  }
+
+  /* Drawer header */
+  .drawer-head {
+    position: sticky;
+    top: 0;
+    z-index: 2;
     display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 -14px 8px;
+    padding: 18px 20px 14px;
+    background: #fff;
+    border-bottom: 1px solid #eef0f5;
+  }
+
+  .drawer-title {
+    color: #0f172a;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+
+  .drawer-close {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border: 0;
+    border-radius: 12px;
+    background: #f3f5f9;
+    color: #111827;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  .drawer-close:hover {
+    background: #eff6ff;
+    color: var(--blue);
+  }
+
+  /* Links */
+  .nav-link-icon {
+    display: block;
+    flex-shrink: 0;
+    color: #64748b;
+    transition: color 0.2s ease;
   }
 
   .nav-links > a {
-    display: block;
-    padding: 13px 12px;
-    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 50px;
+    padding: 12px 14px;
+    border-radius: 12px;
     font-size: 15px;
+    font-weight: 500;
   }
 
-  .nav-links > a:hover {
+  .nav-links > a:hover,
+  .nav-links > a:active {
     background: #eff6ff;
   }
 
+  .nav-links > a:hover .nav-link-icon,
+  .nav-dropdown-toggle:hover .nav-link-icon,
+  .nav-dropdown.dropdown-open .nav-link-icon {
+    color: var(--blue);
+  }
+
+  /* Categories */
   .nav-dropdown {
     display: block;
     width: 100%;
   }
 
   .nav-dropdown-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 14px;
     width: 100%;
-    justify-content: space-between;
-    padding: 13px 12px;
-    border-radius: 9px;
+    min-height: 50px;
+    padding: 12px 14px;
+    border-radius: 12px;
     font-size: 15px;
     text-align: left;
   }
 
-  .nav-dropdown-toggle:hover {
+  .nav-dropdown-toggle:hover,
+  .nav-dropdown.dropdown-open .nav-dropdown-toggle {
     background: #eff6ff;
   }
 
-  /* Categories list menu ke andar hi khule (tap se) */
+  .dropdown-label {
+    flex: 1;
+  }
+
   .dropdown-menu {
     position: static;
     width: 100%;
-    padding: 4px 0 4px 12px;
+    margin: 4px 0 4px 24px;
+    padding: 2px 0 2px 12px;
     transform: none;
     border: 0;
+    border-left: 2px solid #e2e8f0;
     border-radius: 0;
     box-shadow: none;
   }
@@ -564,20 +662,32 @@
     font-size: 14px;
   }
 
-  .nav-actions {
-    gap: 14px;
-  }
-}
-
-/* ---------- Mobile ---------- */
-@media (max-width: 760px) {
-  .site-header {
-    padding: 12px 12px 4px;
+  /* Drawer footer: Admin */
+  .drawer-footer {
+    display: block;
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px solid #eef0f5;
   }
 
-  .navbar {
-    min-height: 65px;
-    border-radius: 18px;
+  .drawer-admin {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 50px;
+    padding: 12px 16px;
+    border-radius: 14px;
+    background: #0f172a;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    transition: background 0.2s ease;
+  }
+
+  .drawer-admin:hover,
+  .drawer-admin:active {
+    background: var(--blue);
   }
 
   .nav-actions {
@@ -586,7 +696,6 @@
 }
 
 @media (max-width: 600px) {
-  /* Sirf icon dikhao ("Cart" / "Wishlist" text hide) */
   .nav-wishlist > span:last-child,
   .nav-cart > span:last-child {
     display: none;
@@ -601,7 +710,6 @@
     right: -9px;
   }
 
-  /* Notification navbar ke neeche aaye */
   .cart-notification {
     top: 92px;
     right: 12px;
@@ -610,7 +718,6 @@
   }
 }
 
-/* ---------- Extra-small phones ---------- */
 @media (max-width: 400px) {
   .navbar {
     gap: 5px;
@@ -638,5 +745,13 @@
 
   .mobile-menu-button {
     padding: 6px;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .nav-links,
+  .nav-overlay {
+    transition: none;
   }
 }

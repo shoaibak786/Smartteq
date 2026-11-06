@@ -1,51 +1,153 @@
-
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import {
-  Monitor,
+  Gamepad2,
+  Cpu,
+  HardDrive,
+  Wind,
+  Globe,
   Code2,
+  ShoppingBag,
+  Store,
+  Barcode,
+  Printer,
+  TrendingUp,
   Wrench,
+  Laptop,
+  Monitor,
+  Settings,
   ChevronLeft,
   ChevronRight,
   ArrowRight,
 } from "lucide-react";
+import "../styles/HeroSection.css";
+
+const SLIDE_DURATION = 6000;
 
 const slides = [
   {
-    eyebrow: "QUALITY TECH PRODUCTS",
-    title: "Premium Products",
-    accent: "& Accessories",
+    key: "gaming",
+    eyebrow: "GAMING PC & DESKTOP",
+    icon: Gamepad2,
+    title: "Gaming PCs Built",
+    accent: "For Performance",
     description:
-      "Discover computers, laptops, peripherals and reliable technology products for your needs.",
-    button: "Explore Products",
-    icon: Monitor,
-    visual: "products",
-    points: ["Quality Products", "Trusted Support", "Great Service"],
+      "Custom gaming PCs and desktops with powerful processors, graphics and cooling, assembled for smooth, high-FPS play.",
+    button: "Explore Gaming PCs",
+    href: "#products",
+    points: ["Custom Builds", "High Performance", "Expert Assembly"],
     color: "#06b6d4",
+    chip: {
+      icon: Gamepad2,
+      title: "Gaming Ready",
+      sub: "Built for smooth gameplay",
+    },
+    status: "Custom gaming builds",
+    card: {
+      tone: "dark",
+      label: "smartteq.gaming",
+      headIcon: Cpu,
+      heading: "Built to win.",
+      rows: [
+        { icon: Cpu, title: "Processor", sub: "Fast, stable performance" },
+        { icon: Gamepad2, title: "Graphics", sub: "High FPS gaming" },
+        { icon: HardDrive, title: "Storage", sub: "Quick game loading" },
+      ],
+      foot: "Custom builds available",
+    },
   },
   {
-    eyebrow: "WEB DESIGN & DEVELOPMENT",
-    title: "Build Your",
-    accent: "Digital Future",
-    description:
-      "Modern, responsive websites designed to help your business grow and stand out online.",
-    button: "Build Your Website",
+    key: "web",
+    eyebrow: "WEB SERVICES",
     icon: Code2,
-    visual: "development",
-    points: ["Modern Design", "Responsive Websites", "Custom Solutions"],
+    title: "Websites That",
+    accent: "Grow Your Business",
+    description:
+      "WordPress, React.js and Shopify websites, online stores and custom web apps, designed to look sharp and load fast.",
+    button: "Start Your Website",
+    href: "#web-services",
+    points: ["WordPress", "React.js", "Shopify"],
     color: "#a855f7",
+    chip: {
+      icon: Globe,
+      title: "Web Services",
+      sub: "WordPress, React & Shopify",
+    },
+    status: "Modern, responsive websites",
+    card: {
+      tone: "dark",
+      label: "smartteq.dev",
+      headIcon: Code2,
+      heading: "Ideas into reality.",
+      rows: [
+        { icon: Globe, title: "WordPress", sub: "Business sites & blogs" },
+        { icon: Code2, title: "React.js", sub: "Fast custom web apps" },
+        { icon: ShoppingBag, title: "Shopify", sub: "Online stores" },
+      ],
+      foot: "From design to launch",
+    },
   },
   {
+    key: "pos",
+    eyebrow: "POINT OF SALE",
+    icon: Store,
+    title: "Smart Billing,",
+    accent: "Simple Selling",
+    description:
+      "Complete POS setups to manage billing, stock and sales reports, with barcode scanners and receipt printers ready to use.",
+    button: "Explore POS Systems",
+    href: "#pos",
+    points: ["Fast Billing", "Inventory Control", "Sales Reports"],
+    color: "#10b981",
+    chip: {
+      icon: Store,
+      title: "Point of Sale",
+      sub: "Billing made easy",
+    },
+    status: "Billing, stock & reports",
+    card: {
+      tone: "light",
+      label: "smartteq.pos",
+      headIcon: Store,
+      heading: "Sell faster.",
+      rows: [
+        { icon: Barcode, title: "Barcode Scanning", sub: "Quick, accurate billing" },
+        { icon: Printer, title: "Receipt Printing", sub: "Clean, instant receipts" },
+        { icon: TrendingUp, title: "Sales Reports", sub: "Know your best sellers" },
+      ],
+      foot: "Ready to sell",
+    },
+  },
+  {
+    key: "repair",
     eyebrow: "EXPERT REPAIR SERVICES",
+    icon: Wrench,
     title: "Tech Repair",
     accent: "You Can Trust",
     description:
-      "Professional computer and laptop troubleshooting, maintenance and repair services.",
+      "Professional laptop and computer repairing, from careful diagnosis to reliable fixes, so your devices work like new.",
     button: "Explore Repairing",
-    icon: Wrench,
-    visual: "repair",
-    points: ["Expert Technicians", "Careful Diagnosis", "Reliable Support"],
+    href: "#repairing",
+    points: ["Laptop Repairing", "Computer Repairing", "Careful Diagnosis"],
     color: "#f59e0b",
+    chip: {
+      icon: Wrench,
+      title: "Repair Services",
+      sub: "Laptops & computers",
+    },
+    status: "Laptop & computer repairing",
+    card: {
+      tone: "light",
+      label: "smartteq.repair",
+      headIcon: Wrench,
+      heading: "Expert tech care.",
+      rows: [
+        { icon: Laptop, title: "Laptop Repairing", sub: "Screen, keyboard, battery" },
+        { icon: Monitor, title: "Computer Repairing", sub: "Hardware & software faults" },
+        { icon: Settings, title: "Maintenance", sub: "Cleaning and tune-ups" },
+      ],
+      foot: "Diagnose. Repair. Restore.",
+    },
   },
 ];
 
@@ -54,6 +156,7 @@ export default function HeroSection() {
   const contentRef = useRef(null);
   const visualRef = useRef(null);
 
+  // Slide change animation
   useEffect(() => {
     const content = contentRef.current;
     const visual = visualRef.current;
@@ -93,16 +196,19 @@ export default function HeroSection() {
     );
   }, [current]);
 
+  // Auto-play: slide badalne par timer dobara shuru (progress bar ke sath sync)
   useEffect(() => {
-    const timer = window.setInterval(() => {
+    const timer = window.setTimeout(() => {
       setCurrent((previous) => (previous + 1) % slides.length);
-    }, 6000);
+    }, SLIDE_DURATION);
 
-    return () => window.clearInterval(timer);
-  }, []);
+    return () => window.clearTimeout(timer);
+  }, [current]);
 
   const slide = slides[current];
   const SlideIcon = slide.icon;
+  const ChipIcon = slide.chip.icon;
+  const HeadIcon = slide.card.headIcon;
 
   const changeSlide = (index) => {
     setCurrent((index + slides.length) % slides.length);
@@ -117,7 +223,7 @@ export default function HeroSection() {
       <div className="hero-grid" />
 
       <div className="hero-inner">
-        <div className="hero-content" ref={contentRef} key={current}>
+        <div className="hero-content" ref={contentRef} key={slide.key}>
           <div className="hero-eyebrow">
             <SlideIcon size={15} />
             {slide.eyebrow}
@@ -132,16 +238,7 @@ export default function HeroSection() {
 
           <p className="hero-description">{slide.description}</p>
 
-          <a
-            className="hero-button"
-            href={
-              current === 0
-                ? "#products"
-                : current === 1
-                  ? "#development"
-                  : "#repairing"
-            }
-          >
+          <a className="hero-button" href={slide.href}>
             {slide.button}
             <ArrowRight size={19} />
           </a>
@@ -157,64 +254,66 @@ export default function HeroSection() {
         </div>
 
         <div
-          className={`hero-visual visual-${slide.visual}`}
+          className={`hero-visual visual-${slide.key}`}
           ref={visualRef}
         >
           <div className="visual-orbit orbit-one" />
           <div className="visual-orbit orbit-two" />
           <div className="visual-glow" />
 
-          {current === 0 && (
-            <div className="visual-card product-card">
-              <Monitor size={100} strokeWidth={1.1} />
-              <span>SMART TECH</span>
-              <strong>Technology for tomorrow.</strong>
-              <div className="product-mini-icons">
-                <Monitor />
-                <Code2 />
-                <Wrench />
-              </div>
+          <div className={`visual-card is-${slide.card.tone}`}>
+            <div className="card-top">
+              <span />
+              <span />
+              <span />
+              <small>{slide.card.label}</small>
             </div>
-          )}
 
-          {current === 1 && (
-            <div className="visual-card code-card">
-              <div className="code-top">
-                <span />
-                <span />
-                <span />
-                <small>smartteq.dev</small>
-              </div>
-              <Code2 size={88} strokeWidth={1.2} />
-              <strong>Ideas into reality.</strong>
-              <code>{"<"}buildYourFuture /{">"}</code>
+            <div className="card-head">
+              <span className="card-head-icon">
+                <HeadIcon size={26} strokeWidth={1.8} />
+              </span>
+              <strong>{slide.card.heading}</strong>
             </div>
-          )}
 
-          {current === 2 && (
-            <div className="visual-card repair-card">
-              <Wrench size={92} strokeWidth={1.2} />
-              <strong>Expert Tech Care</strong>
-              <span>Diagnose. Repair. Restore.</span>
-              <div className="repair-status">
-                <i /> Service &amp; support
-              </div>
+            <ul className="card-rows">
+              {slide.card.rows.map((row) => {
+                const RowIcon = row.icon;
+
+                return (
+                  <li key={row.title} className="card-row">
+                    <span className="row-icon">
+                      <RowIcon size={17} />
+                    </span>
+                    <span className="row-text">
+                      <strong>{row.title}</strong>
+                      <small>{row.sub}</small>
+                    </span>
+                    <i className="row-dot" />
+                  </li>
+                );
+              })}
+            </ul>
+
+            <div className="card-foot">
+              <i />
+              {slide.card.foot}
             </div>
-          )}
+          </div>
 
           <div className="floating-chip chip-top">
             <span className="chip-icon">
-              <Monitor size={18} />
+              <ChipIcon size={18} />
             </span>
             <span>
-              <strong>Smart Solutions</strong>
-              <small>Technology made simple</small>
+              <strong>{slide.chip.title}</strong>
+              <small>{slide.chip.sub}</small>
             </span>
           </div>
 
           <div className="floating-chip chip-bottom">
             <span className="status-dot" />
-            Reliable technology services
+            {slide.status}
           </div>
         </div>
       </div>
@@ -233,12 +332,10 @@ export default function HeroSection() {
           {slides.map((item, index) => (
             <button
               type="button"
-              key={item.visual}
-              className={`slider-dot ${
-                current === index ? "active" : ""
-              }`}
+              key={item.key}
+              className={`slider-dot ${current === index ? "active" : ""}`}
               onClick={() => changeSlide(index)}
-              aria-label={`Go to slide ${index + 1}`}
+              aria-label={`Go to slide ${index + 1}: ${item.title} ${item.accent}`}
               aria-current={current === index ? "true" : undefined}
             />
           ))}
@@ -255,7 +352,7 @@ export default function HeroSection() {
       </div>
 
       <div className="hero-progress" key={`progress-${current}`}>
-        <span style={{ animationDuration: "6s" }} />
+        <span style={{ animationDuration: `${SLIDE_DURATION}ms` }} />
       </div>
     </section>
   );

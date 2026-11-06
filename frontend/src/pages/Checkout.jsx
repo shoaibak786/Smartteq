@@ -1,8 +1,9 @@
-
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { motion, useReducedMotion } from "motion/react";
 import {
     ArrowLeft,
+    ArrowRight,
     ShoppingBag,
     MapPin,
     User,
@@ -13,6 +14,14 @@ import {
     Monitor,
     Truck,
     MessageCircle,
+    ShieldCheck,
+    Lock,
+    Check,
+    Building2,
+    Hash,
+    Banknote,
+    Headphones,
+    BadgeCheck,
 } from "lucide-react";
 
 import { useCart } from "../context/CartContext";
@@ -25,9 +34,54 @@ const formatPrice = (price) =>
         maximumFractionDigits: 2,
     })}`;
 
+// Input with a leading icon and a small "valid" tick (visual only)
+function IconInput({ icon: Icon, valid, ...props }) {
+    return (
+        <div className={`checkout-input-icon${valid ? " is-valid" : ""}`}>
+            <Icon size={17} />
+            <input {...props} />
+            <Check
+                size={15}
+                strokeWidth={3}
+                className="checkout-valid-tick"
+                aria-hidden="true"
+            />
+        </div>
+    );
+}
+
 export default function Checkout() {
     const { cartItems, subtotal, clearCart } = useCart();
     const navigate = useNavigate();
+    const reduce = useReducedMotion();
+
+    // Soft entrance used by the form cards (disabled for reduced motion)
+    const rise = (index = 0) =>
+        reduce
+            ? {}
+            : {
+                  initial: { opacity: 0, y: 28 },
+                  animate: { opacity: 1, y: 0 },
+                  transition: {
+                      duration: 0.6,
+                      delay: index * 0.1,
+                      ease: [0.22, 1, 0.36, 1],
+                  },
+              };
+
+    // Cursor spotlight on cards (visual only, off for reduced motion)
+    const spotlight = (event) => {
+        if (reduce) return;
+        const rect = event.currentTarget.getBoundingClientRect();
+        event.currentTarget.style.setProperty(
+            "--mx",
+            `${event.clientX - rect.left}px`
+        );
+        event.currentTarget.style.setProperty(
+            "--my",
+            `${event.clientY - rect.top}px`
+        );
+    };
 
     const [form, setForm] = useState({
         fullName: "",
@@ -43,6 +97,21 @@ export default function Checkout() {
     const [errors, setErrors] = useState({});
     const [placedOrder, setPlacedOrder] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Visual only: is a field filled in correctly?
+    const isOk = (name) => {
+        const value = String(form[name] || "").trim();
+        if (!value || errors[name]) return false;
+        if (name === "phone") return /^[+0-9\s()-]{10,20}$/.test(value);
+        if (name === "email") return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+        return true;
+    };
+
+    const requiredFields = ["fullName", "phone", "address", "city"];
+    const completedCount = requiredFields.filter(isOk).length;
+    const completedPercent = Math.round(
+        (completedCount / requiredFields.length) * 100
+    );
 
     // =====================================
     // SECURE TRACKING TOKEN
@@ -441,8 +510,11 @@ export default function Checkout() {
     if (cartItems.length === 0) {
         return (
             <section className="checkout-page">
-                <div className="checkout-empty">
-                    <ShoppingBag size={46} />
+                <motion.div className="checkout-empty" {...rise(0)}>
+                    <div className="checkout-empty-icon">
+                        <span className="checkout-empty-ring" aria-hidden="true" />
+                        <ShoppingBag size={42} />
+                    </div>
 
                     <h1>Your cart is empty</h1>
 
@@ -456,7 +528,7 @@ export default function Checkout() {
                     >
                         Browse Products
                     </Link>
-                </div>
+                </motion.div>
             </section>
         );
     }
@@ -465,11 +537,21 @@ export default function Checkout() {
     // CHECKOUT FORM
     // =====================================
 
+    const totalItems = cartItems.reduce(
+        (total, item) => total + item.quantity,
+        0
+    );
+
     return (
         <section className="checkout-page">
             <div className="checkout-container">
 
-                <div className="checkout-heading">
+                <motion.div
+                    className="checkout-heading"
+                    initial={reduce ? false : { opacity: 0, y: 18, filter: "blur(8px)" }}
+                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                    transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                >
                     <div>
                         <span className="checkout-eyebrow">FINAL STEP</span>
 
@@ -484,7 +566,38 @@ export default function Checkout() {
                         <ArrowLeft size={17} />
                         Back to Cart
                     </Link>
-                </div>
+                </motion.div>
+
+                {/* PROGRESS STEPPER */}
+
+                <motion.ol
+                    className="checkout-steps"
+                    aria-label="Checkout progress"
+                    initial={reduce ? false : { opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.55, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+                >
+                    <li className="checkout-step is-done">
+                        <span className="checkout-step-dot">
+                            <Check size={15} strokeWidth={3} />
+                        </span>
+                        <span className="checkout-step-label">Cart</span>
+                    </li>
+
+                    <li className="checkout-step-line is-done" aria-hidden="true" />
+
+                    <li className="checkout-step is-active" aria-current="step">
+                        <span className="checkout-step-dot">2</span>
+                        <span className="checkout-step-label">Delivery Details</span>
+                    </li>
+
+                    <li className="checkout-step-line" aria-hidden="true" />
+
+                    <li className="checkout-step">
+                        <span className="checkout-step-dot">3</span>
+                        <span className="checkout-step-label">Confirmation</span>
+                    </li>
+                </motion.ol>
 
                 <form onSubmit={handlePlaceOrder} noValidate>
                     <div className="checkout-layout">
@@ -493,7 +606,13 @@ export default function Checkout() {
 
                             {/* CUSTOMER INFORMATION */}
 
-                            <div className="checkout-card">
+                            <motion.div
+                                className="checkout-card"
+                                onMouseMove={spotlight}
+                                {...rise(1)}
+                            >
+                                <span className="checkout-card-num" aria-hidden="true">01</span>
+
                                 <div className="checkout-section-heading">
                                     <span className="checkout-section-icon">
                                         <User size={19} />
@@ -512,7 +631,9 @@ export default function Checkout() {
                                             Full Name *
                                         </label>
 
-                                        <input
+                                        <IconInput
+                                            icon={User}
+                                            valid={isOk("fullName")}
                                             id="fullName"
                                             name="fullName"
                                             value={form.fullName}
@@ -531,19 +652,17 @@ export default function Checkout() {
                                             Phone Number *
                                         </label>
 
-                                        <div className="checkout-input-icon">
-                                            <Phone size={17} />
-
-                                            <input
-                                                id="phone"
-                                                name="phone"
-                                                type="tel"
-                                                value={form.phone}
-                                                onChange={handleChange}
-                                                placeholder="03XX XXXXXXX"
-                                                autoComplete="tel"
-                                            />
-                                        </div>
+                                        <IconInput
+                                            icon={Phone}
+                                            valid={isOk("phone")}
+                                            id="phone"
+                                            name="phone"
+                                            type="tel"
+                                            value={form.phone}
+                                            onChange={handleChange}
+                                            placeholder="03XX XXXXXXX"
+                                            autoComplete="tel"
+                                        />
 
                                         {errors.phone && (
                                             <small>{errors.phone}</small>
@@ -555,19 +674,17 @@ export default function Checkout() {
                                             Email Address
                                         </label>
 
-                                        <div className="checkout-input-icon">
-                                            <Mail size={17} />
-
-                                            <input
-                                                id="email"
-                                                name="email"
-                                                type="email"
-                                                value={form.email}
-                                                onChange={handleChange}
-                                                placeholder="you@example.com"
-                                                autoComplete="email"
-                                            />
-                                        </div>
+                                        <IconInput
+                                            icon={Mail}
+                                            valid={isOk("email")}
+                                            id="email"
+                                            name="email"
+                                            type="email"
+                                            value={form.email}
+                                            onChange={handleChange}
+                                            placeholder="you@example.com"
+                                            autoComplete="email"
+                                        />
 
                                         {errors.email && (
                                             <small>{errors.email}</small>
@@ -575,11 +692,17 @@ export default function Checkout() {
                                     </div>
 
                                 </div>
-                            </div>
+                            </motion.div>
 
                             {/* DELIVERY ADDRESS */}
 
-                            <div className="checkout-card">
+                            <motion.div
+                                className="checkout-card"
+                                onMouseMove={spotlight}
+                                {...rise(2)}
+                            >
+                                <span className="checkout-card-num" aria-hidden="true">02</span>
+
                                 <div className="checkout-section-heading">
                                     <span className="checkout-section-icon">
                                         <MapPin size={19} />
@@ -600,7 +723,9 @@ export default function Checkout() {
                                             Complete Address *
                                         </label>
 
-                                        <input
+                                        <IconInput
+                                            icon={MapPin}
+                                            valid={isOk("address")}
                                             id="address"
                                             name="address"
                                             value={form.address}
@@ -619,7 +744,9 @@ export default function Checkout() {
                                             Area / Town
                                         </label>
 
-                                        <input
+                                        <IconInput
+                                            icon={Building2}
+                                            valid={isOk("area")}
                                             id="area"
                                             name="area"
                                             value={form.area}
@@ -631,7 +758,9 @@ export default function Checkout() {
                                     <div className="checkout-field">
                                         <label htmlFor="city">City *</label>
 
-                                        <input
+                                        <IconInput
+                                            icon={Building2}
+                                            valid={isOk("city")}
                                             id="city"
                                             name="city"
                                             value={form.city}
@@ -650,7 +779,9 @@ export default function Checkout() {
                                             Postal Code
                                         </label>
 
-                                        <input
+                                        <IconInput
+                                            icon={Hash}
+                                            valid={isOk("postalCode")}
                                             id="postalCode"
                                             name="postalCode"
                                             value={form.postalCode}
@@ -676,11 +807,17 @@ export default function Checkout() {
                                     </div>
 
                                 </div>
-                            </div>
+                            </motion.div>
 
                             {/* PAYMENT */}
 
-                            <div className="checkout-card">
+                            <motion.div
+                                className="checkout-card"
+                                onMouseMove={spotlight}
+                                {...rise(3)}
+                            >
+                                <span className="checkout-card-num" aria-hidden="true">03</span>
+
                                 <div className="checkout-section-heading">
                                     <span className="checkout-section-icon">
                                         <PackageCheck size={19} />
@@ -703,6 +840,10 @@ export default function Checkout() {
 
                                     <span className="checkout-payment-radio" />
 
+                                    <span className="checkout-payment-cash" aria-hidden="true">
+                                        <Banknote size={22} />
+                                    </span>
+
                                     <span className="checkout-payment-copy">
                                         <strong>Cash on Delivery</strong>
 
@@ -715,100 +856,162 @@ export default function Checkout() {
                                         COD
                                     </span>
                                 </label>
-                            </div>
+                            </motion.div>
 
                             {errors.form && (
-                                <p className="checkout-form-error">
+                                <motion.p
+                                    className="checkout-form-error"
+                                    role="alert"
+                                    initial={reduce ? false : { opacity: 0, x: 0 }}
+                                    animate={
+                                        reduce
+                                            ? { opacity: 1 }
+                                            : { opacity: 1, x: [0, -8, 8, -5, 5, 0] }
+                                    }
+                                    transition={{ duration: 0.45 }}
+                                >
                                     {errors.form}
-                                </p>
+                                </motion.p>
                             )}
 
                         </div>
 
                         {/* ORDER SUMMARY */}
 
-                        <aside className="checkout-summary">
+                        <motion.aside
+                            className="checkout-summary"
+                            initial={reduce ? false : { opacity: 0, x: 32 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.65, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                        >
 
-                            <h2>Order Summary</h2>
+                            <div className="checkout-summary-head">
+                                <div>
+                                    <h2>Order Summary</h2>
 
-                            <p className="checkout-summary-count">
-                                {cartItems.reduce(
-                                    (total, item) =>
-                                        total + item.quantity,
-                                    0
-                                )}{" "}
-                                item(s) in your order
-                            </p>
+                                    <p className="checkout-summary-count">
+                                        {totalItems} item(s) in your order
+                                    </p>
+                                </div>
 
-                            <div className="checkout-summary-items">
+                                <span className="checkout-summary-bag" aria-hidden="true">
+                                    <ShoppingBag size={21} />
+                                </span>
+                            </div>
 
-                                {cartItems.map((item) => (
-                                    <div
-                                        className="checkout-summary-item"
-                                        key={item.id}
-                                    >
-                                        <div className="checkout-summary-image">
-                                            <img
-                                                src={item.image}
-                                                alt={item.name}
-                                            />
+                            <div className="checkout-summary-body">
 
-                                            <span>{item.quantity}</span>
-                                        </div>
-
-                                        <div className="checkout-summary-product">
-                                            <h3>{item.name}</h3>
-
-                                            <span>
-                                                {formatPrice(item.price)}
-                                            </span>
-                                        </div>
-
-                                        <strong>
-                                            {formatPrice(
-                                                item.price * item.quantity
-                                            )}
-                                        </strong>
+                                <div className="checkout-progress">
+                                    <div className="checkout-progress-top">
+                                        <span>Details completed</span>
+                                        <strong>{completedCount}/{requiredFields.length}</strong>
                                     </div>
-                                ))}
+
+                                    <div className="checkout-progress-track">
+                                        <span
+                                            className="checkout-progress-fill"
+                                            style={{ width: `${completedPercent}%` }}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="checkout-summary-items">
+
+                                    {cartItems.map((item, index) => (
+                                        <div
+                                            className="checkout-summary-item"
+                                            key={item.id}
+                                            style={{ "--i": index }}
+                                        >
+                                            <div className="checkout-summary-image">
+                                                <img
+                                                    src={item.image}
+                                                    alt={item.name}
+                                                />
+
+                                                <span>{item.quantity}</span>
+                                            </div>
+
+                                            <div className="checkout-summary-product">
+                                                <h3>{item.name}</h3>
+
+                                                <span>
+                                                    {formatPrice(item.price)}
+                                                </span>
+                                            </div>
+
+                                            <strong>
+                                                {formatPrice(
+                                                    item.price * item.quantity
+                                                )}
+                                            </strong>
+                                        </div>
+                                    ))}
+
+                                </div>
+
+                                <div className="checkout-summary-line">
+                                    <span>Subtotal</span>
+                                    <strong>{formatPrice(subtotal)}</strong>
+                                </div>
+
+                                <div className="checkout-summary-line">
+                                    <span>Shipping</span>
+                                    <strong>To be confirmed</strong>
+                                </div>
+
+                                <div className="checkout-summary-total">
+                                    <span>Estimated Total</span>
+                                    <strong>{formatPrice(subtotal)}</strong>
+                                </div>
+
+                                <p className="checkout-shipping-note">
+                                    Delivery charges will be confirmed separately.
+                                </p>
+
+                                <button
+                                    type="submit"
+                                    className="checkout-place-order"
+                                    disabled={isSubmitting}
+                                >
+                                    {isSubmitting ? (
+                                        <>
+                                            <span className="checkout-spinner" aria-hidden="true" />
+                                            Placing Order...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Lock size={16} />
+                                            Place Order
+                                            <ArrowRight size={17} className="checkout-btn-arrow" />
+                                        </>
+                                    )}
+                                </button>
+
+                                <p className="checkout-terms-note">
+                                    <ShieldCheck size={13} />
+                                    By placing your order, you confirm that your
+                                    delivery details are correct.
+                                </p>
+
+                                <ul className="checkout-trust">
+                                    <li>
+                                        <ShieldCheck size={17} />
+                                        <span>Secure checkout</span>
+                                    </li>
+                                    <li>
+                                        <BadgeCheck size={17} />
+                                        <span>Pay on delivery</span>
+                                    </li>
+                                    <li>
+                                        <Headphones size={17} />
+                                        <span>Order support</span>
+                                    </li>
+                                </ul>
 
                             </div>
 
-                            <div className="checkout-summary-line">
-                                <span>Subtotal</span>
-                                <strong>{formatPrice(subtotal)}</strong>
-                            </div>
-
-                            <div className="checkout-summary-line">
-                                <span>Shipping</span>
-                                <strong>To be confirmed</strong>
-                            </div>
-
-                            <div className="checkout-summary-total">
-                                <span>Estimated Total</span>
-                                <strong>{formatPrice(subtotal)}</strong>
-                            </div>
-
-                            <p className="checkout-shipping-note">
-                                Delivery charges will be confirmed separately.
-                            </p>
-
-                            <button
-                                type="submit"
-                                className="checkout-place-order"
-                                disabled={isSubmitting}
-                            >
-                                {isSubmitting
-                                    ? "Placing Order..."
-                                    : "Place Order"}
-                            </button>
-
-                            <p className="checkout-terms-note">
-                                By placing your order, you confirm that your
-                                delivery details are correct.
-                            </p>
-
-                        </aside>
+                        </motion.aside>
 
                     </div>
                 </form>

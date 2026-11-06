@@ -7,7 +7,6 @@ import {
   FaXTwitter,
   FaGoogle,
   FaWhatsapp,
-  FaHeart,
 } from "react-icons/fa6";
 import {
   FiMapPin,
@@ -60,6 +59,7 @@ const PHONE = "+92 321 5003621";
 const PHONE_LINK = "+923215003621";
 const EMAIL = "khawar.lab@gmail.com";
 const WHATSAPP_URL = "https://wa.me/923215003621";
+const DEVELOPER_URL = "https://shoaib-portfolio-khaki.vercel.app/";
 
 const ADDRESS =
   "18 km Canal Bank Road Lahore";
@@ -83,7 +83,6 @@ export default function Footer() {
     <>
       <footer className="footer" id="contact">
         <div className="footer__container">
-
           {/* Brand */}
           <div className="footer__brand">
             <Link
@@ -104,7 +103,7 @@ export default function Footer() {
             </Link>
 
             <span className="footer__brand-tagline">
-              SMART TECHNOLOGY. BETTER FUTURE.
+              Smart technology. Better future.
             </span>
 
             <p className="footer__text">
@@ -135,7 +134,6 @@ export default function Footer() {
           {/* Quick Links */}
           <div className="footer__col">
             <h3 className="footer__heading">Quick Links</h3>
-            <span className="footer__heading-line" />
 
             <ul className="footer__links">
               {quickLinks.map((link) => (
@@ -155,7 +153,6 @@ export default function Footer() {
           {/* Contact */}
           <div className="footer__col">
             <h3 className="footer__heading">Get In Touch</h3>
-            <span className="footer__heading-line" />
 
             <p className="footer__contact-intro">
               Have a question or need assistance? Our team is here to help.
@@ -211,11 +208,27 @@ export default function Footer() {
             © {currentYear} <strong>SMARTTEQ</strong>. All Rights Reserved.
           </p>
 
-          <p className="footer__crafted">
-            Crafted with
-            <FaHeart className="footer__heart" aria-hidden="true" />
-            <span>by Smartteq</span>
-          </p>
+          <a
+            href={DEVELOPER_URL}
+            className="footer__credit"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Website developed by Shoaib Ajmal (opens portfolio)"
+          >
+            <span className="footer__credit-avatar" aria-hidden="true">
+              SA
+            </span>
+
+            <span className="footer__credit-text">
+              <small>Website developed by</small>
+              <strong>Shoaib Ajmal</strong>
+            </span>
+
+            <FiArrowUpRight
+              className="footer__credit-arrow"
+              aria-hidden="true"
+            />
+          </a>
 
           <button
             type="button"
@@ -226,6 +239,11 @@ export default function Footer() {
             Back to Top <FiArrowUp aria-hidden="true" />
           </button>
         </div>
+
+        {/* Big decorative wordmark */}
+        <div className="footer__wordmark" aria-hidden="true">
+          SMARTTEQ
+        </div>
       </footer>
 
       {/* Floating WhatsApp */}
@@ -235,9 +253,9 @@ export default function Footer() {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Chat with Smartteq on WhatsApp"
+        title="Chat with us on WhatsApp"
       >
-        <FaWhatsapp size={25} aria-hidden="true" />
-        <span className="footer__whatsapp-label">Chat with us</span>
+        <FaWhatsapp size={28} aria-hidden="true" />
       </a>
     </>
   );

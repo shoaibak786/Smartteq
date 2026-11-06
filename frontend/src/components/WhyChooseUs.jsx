@@ -42,11 +42,26 @@ const services = [
   },
 ];
 
+// Mouse ke peeche chalne wali roshni (sirf design, mouse devices par)
+const handleSpotlight = (event) => {
+  const card = event.currentTarget;
+  const rect = card.getBoundingClientRect();
+
+  card.style.setProperty("--mx", `${event.clientX - rect.left}px`);
+  card.style.setProperty("--my", `${event.clientY - rect.top}px`);
+};
+
 export default function WhyChooseUs() {
   return (
     <section className="why-choose-section" id="why-choose-us">
+      <span className="why-orb why-orb-one" aria-hidden="true" />
+      <span className="why-orb why-orb-two" aria-hidden="true" />
+
       <div className="why-choose-heading">
-        <span className="why-choose-eyebrow">WHY CHOOSE US</span>
+        <span className="why-choose-eyebrow">
+          <i aria-hidden="true" />
+          Why choose us
+        </span>
 
         <h2>
           Premium Services <span>Zero Compromise</span>
@@ -67,10 +82,11 @@ export default function WhyChooseUs() {
             <article
               className={`service-card service-${service.color}`}
               key={service.id}
+              onMouseMove={handleSpotlight}
             >
               <div className="service-icon">
                 <ServiceIcon
-                  size={33}
+                  size={30}
                   strokeWidth={2}
                   aria-hidden="true"
                 />

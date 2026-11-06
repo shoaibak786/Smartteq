@@ -4,6 +4,13 @@ import {
   ShoppingCart,
   Menu,
   X,
+  Home,
+  Package,
+  Wrench,
+  Truck,
+  Info,
+  LayoutGrid,
+  ShieldCheck,
 } from "lucide-react";
 
 import { Link } from "react-router-dom";
@@ -21,11 +28,11 @@ export default function Navbar() {
   const { cartCount } = useCart();
 
   const navLinks = [
-    ["Home", "/"],
-    ["All Products", "/products"],
-    ["Repairing", "/repairing"],
-    ["Track Order", "/track-order"],
-    ["About Us", "/about"],
+    ["Home", "/", Home],
+    ["All Products", "/products", Package],
+    ["Repairing", "/repairing", Wrench],
+    ["Track Order", "/track-order", Truck],
+    ["About Us", "/about", Info],
   ];
 
   // Fetch actual categories from database API
@@ -72,7 +79,7 @@ export default function Navbar() {
     return () => controller.abort();
   }, []);
 
-  // Navbar ke bahar tap/click karne ya Escape dabane par menu band ho
+  // Escape dabane ya navbar ke bahar click karne par menu band ho
   useEffect(() => {
     const handlePointerDown = (event) => {
       if (navRef.current && !navRef.current.contains(event.target)) {
@@ -95,6 +102,33 @@ export default function Navbar() {
       document.removeEventListener("pointerdown", handlePointerDown);
       document.removeEventListener("keydown", handleKeyDown);
     };
+  }, []);
+
+  // Drawer khula ho to peeche ka page scroll na ho
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [menuOpen]);
+
+  // Screen bari ho jaye (desktop) to drawer band kar do
+  useEffect(() => {
+    const media = window.matchMedia("(min-width: 761px)");
+
+    const handleChange = (event) => {
+      if (event.matches) {
+        setMenuOpen(false);
+        setCategoriesOpen(false);
+      }
+    };
+
+    media.addEventListener("change", handleChange);
+    return () => media.removeEventListener("change", handleChange);
   }, []);
 
   const closeNavigation = () => {
@@ -127,14 +161,35 @@ export default function Navbar() {
           </span>
         </Link>
 
-        <div className={`nav-links ${menuOpen ? "nav-open" : ""}`}>
-          {navLinks.map(([label, href]) => (
-            <Link
-              key={label}
-              to={href}
+        {/* Dark overlay (sirf mobile par, drawer ke peeche) */}
+        <div
+          className={`nav-overlay ${menuOpen ? "overlay-open" : ""}`}
+          onClick={closeNavigation}
+          aria-hidden="true"
+        />
+
+        {/* Desktop: normal links | Mobile: right side drawer */}
+        <div
+          className={`nav-links ${menuOpen ? "nav-open" : ""}`}
+          id="site-navigation"
+        >
+          {/* Drawer header (sirf mobile) */}
+          <div className="drawer-head">
+            <span className="drawer-title">Menu</span>
+            <button
+              type="button"
+              className="drawer-close"
               onClick={closeNavigation}
+              aria-label="Close navigation"
             >
-              {label}
+              <X size={22} />
+            </button>
+          </div>
+
+          {navLinks.map(([label, href, Icon]) => (
+            <Link key={label} to={href} onClick={closeNavigation}>
+              <Icon size={20} className="nav-link-icon" />
+              <span>{label}</span>
             </Link>
           ))}
 
@@ -152,7 +207,9 @@ export default function Navbar() {
               aria-expanded={categoriesOpen}
               aria-haspopup="true"
             >
-              Categories
+              <LayoutGrid size={20} className="nav-link-icon" />
+
+              <span className="dropdown-label">Categories</span>
 
               <ChevronDown
                 size={16}
@@ -181,6 +238,18 @@ export default function Navbar() {
                 <span>No categories available</span>
               )}
             </div>
+          </div>
+
+          {/* Drawer footer: Admin (sirf mobile) */}
+          <div className="drawer-footer">
+            <Link
+              to="/admin"
+              className="drawer-admin"
+              onClick={closeNavigation}
+            >
+              <ShieldCheck size={20} />
+              <span>Admin</span>
+            </Link>
           </div>
         </div>
 
@@ -212,8 +281,9 @@ export default function Navbar() {
             menuOpen ? "Close navigation" : "Open navigation"
           }
           aria-expanded={menuOpen}
+          aria-controls="site-navigation"
         >
-          {menuOpen ? <X /> : <Menu />}
+          <Menu />
         </button>
       </nav>
     </header>

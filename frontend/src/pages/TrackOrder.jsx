@@ -1,6 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import {
+  AnimatePresence,
+  motion,
+  useMotionTemplate,
+  useMotionValue,
+  useReducedMotion,
+} from 'motion/react'
 import {
   AlertCircle,
   Boxes,
@@ -33,6 +39,13 @@ const TRUST = [
   { icon: Headphones, text: 'Support if you need it' },
 ]
 
+const FLOATERS = [
+  { icon: Boxes, cls: 'left-[7%] top-32', size: 30, delay: 0 },
+  { icon: Truck, cls: 'right-[8%] top-44', size: 34, delay: 1.2 },
+  { icon: PackageCheck, cls: 'left-[12%] top-[26rem]', size: 28, delay: 2.4 },
+  { icon: MapPin, cls: 'right-[13%] top-[30rem]', size: 28, delay: 0.6 },
+]
+
 const EASE = [0.22, 1, 0.36, 1]
 
 const container = {
@@ -46,11 +59,12 @@ const container = {
 }
 
 const item = {
-  hidden: { opacity: 0, y: 18 },
+  hidden: { opacity: 0, y: 18, filter: 'blur(8px)' },
   show: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.55, ease: EASE },
+    filter: 'blur(0px)',
+    transition: { duration: 0.6, ease: EASE },
   },
 }
 
@@ -86,28 +100,64 @@ const getStatusInfo = (status) => {
   return { label: 'Pending', step: 0 }
 }
 
+/* ---------- visual-only helpers (no logic) ---------- */
+
+function SpotlightCard({ children, reduce, className = '' }) {
+  const x = useMotionValue(-300)
+  const y = useMotionValue(-300)
+  const glow = useMotionTemplate`radial-gradient(380px circle at ${x}px ${y}px, rgba(30,111,217,0.16), transparent 65%)`
+
+  const onMove = (e) => {
+    if (reduce) return
+    const rect = e.currentTarget.getBoundingClientRect()
+    x.set(e.clientX - rect.left)
+    y.set(e.clientY - rect.top)
+  }
+
+  return (
+    <div onMouseMove={onMove} className={`group relative ${className}`}>
+      {!reduce && (
+        <motion.div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 z-10 rounded-[inherit] opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          style={{ background: glow }}
+        />
+      )}
+      {children}
+    </div>
+  )
+}
+
 function RadarIcon({ reduce }) {
   return (
-    <div className="relative mx-auto flex h-16 w-16 items-center justify-center">
+    <div className="relative mx-auto flex h-20 w-20 items-center justify-center">
       {!reduce &&
-        [0, 1].map((i) => (
+        [0, 1, 2].map((i) => (
           <motion.span
             key={i}
-            className="absolute inset-0 rounded-2xl border border-brand/40"
+            className="absolute inset-0 rounded-3xl border border-brand/40"
             initial={{ scale: 1, opacity: 0.5 }}
-            animate={{ scale: 2.4, opacity: 0 }}
+            animate={{ scale: 2.6, opacity: 0 }}
             transition={{
-              duration: 2.8,
+              duration: 3.6,
               repeat: Infinity,
-              delay: i * 1.4,
+              delay: i * 1.2,
               ease: 'easeOut',
             }}
           />
         ))}
 
-      <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-brand to-brand-light text-white shadow-xl shadow-brand/30">
-        <PackageSearch size={28} />
-      </div>
+      <motion.div
+        animate={reduce ? undefined : { y: [0, -6, 0], rotate: [0, -3, 3, 0] }}
+        transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+        className="relative flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-brand to-brand-light text-white shadow-2xl shadow-brand/40 ring-4 ring-white/70"
+      >
+        <span
+          aria-hidden
+          className="absolute inset-0 rounded-3xl bg-gradient-to-b from-white/30 to-transparent"
+        />
+        <PackageSearch size={34} className="relative" />
+      </motion.div>
     </div>
   )
 }
@@ -117,9 +167,9 @@ function Stepper({ current, reduce }) {
 
   return (
     <div className="relative mt-8">
-      <div className="absolute left-[10%] right-[10%] top-5 h-1 -translate-y-1/2 rounded-full bg-slate-100">
+      <div className="absolute left-[10%] right-[10%] top-5 h-1.5 -translate-y-1/2 rounded-full bg-slate-100">
         <motion.div
-          className="h-full rounded-full bg-gradient-to-r from-brand to-brand-light"
+          className="relative h-full overflow-hidden rounded-full bg-gradient-to-r from-brand to-brand-light shadow-[0_0_14px_rgba(30,111,217,0.55)]"
           initial={{ width: 0 }}
           animate={{ width: `${pct}%` }}
           transition={{
@@ -127,7 +177,23 @@ function Stepper({ current, reduce }) {
             delay: 0.3,
             ease: EASE,
           }}
-        />
+        >
+          {!reduce && pct > 0 && (
+            <motion.span
+              aria-hidden
+              className="absolute inset-y-0 w-10 bg-gradient-to-r from-transparent via-white/70 to-transparent"
+              initial={{ x: '-100%' }}
+              animate={{ x: '600%' }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                repeatDelay: 1.2,
+                ease: 'easeInOut',
+                delay: 1.5,
+              }}
+            />
+          )}
+        </motion.div>
       </div>
 
       <ol className="relative grid grid-cols-5">
@@ -146,7 +212,7 @@ function Stepper({ current, reduce }) {
                   <motion.span
                     className="absolute inset-0 rounded-full bg-brand/30"
                     initial={{ scale: 1, opacity: 0.6 }}
-                    animate={{ scale: 1.9, opacity: 0 }}
+                    animate={{ scale: 2.2, opacity: 0 }}
                     transition={{
                       duration: 1.8,
                       repeat: Infinity,
@@ -157,7 +223,7 @@ function Stepper({ current, reduce }) {
 
                 <motion.div
                   initial={{ scale: 0.6, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
+                  animate={{ scale: active ? 1.12 : 1, opacity: 1 }}
                   transition={{
                     delay: 0.15 + i * 0.12,
                     type: 'spring',
@@ -166,9 +232,9 @@ function Stepper({ current, reduce }) {
                   }}
                   className={[
                     'relative z-10 flex h-10 w-10 items-center justify-center rounded-full transition-colors',
-                    done && 'bg-brand text-white shadow-md shadow-brand/30',
+                    done && 'bg-gradient-to-br from-brand to-brand-light text-white shadow-md shadow-brand/30',
                     active &&
-                    'border-2 border-brand bg-white text-brand shadow-lg shadow-brand/20',
+                    'border-2 border-brand bg-white text-brand shadow-lg shadow-brand/30',
                     !done && !active && 'bg-slate-100 text-slate-400',
                   ]
                     .filter(Boolean)
@@ -363,6 +429,9 @@ export default function TrackOrder() {
     fetchOrder(controller.signal)
   }
 
+  const inputCls =
+    'w-full rounded-xl border border-slate-200 bg-white/80 px-4 py-3.5 outline-none transition duration-300 placeholder:text-slate-400 hover:border-brand/40 focus:border-brand focus:bg-white focus:shadow-lg focus:shadow-brand/10 focus:ring-4 focus:ring-brand/15'
+
   return (
     <main className="relative isolate min-h-[80vh] overflow-hidden bg-gradient-to-b from-white via-blue-50/60 to-blue-100/60 px-4 py-16 md:py-24">
       <div
@@ -393,6 +462,29 @@ export default function TrackOrder() {
         transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
       />
 
+      {/* floating logistics icons (desktop only, decorative) */}
+      {FLOATERS.map(({ icon: Icon, cls, size, delay }) => (
+        <motion.div
+          key={cls}
+          aria-hidden
+          className={`pointer-events-none absolute -z-10 hidden rounded-2xl border border-brand/15 bg-white/60 p-3 text-brand/60 shadow-lg shadow-brand/10 backdrop-blur lg:block ${cls}`}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={
+            reduce
+              ? { opacity: 1, scale: 1 }
+              : { opacity: 1, scale: 1, y: [0, -14, 0], rotate: [0, 4, -4, 0] }
+          }
+          transition={{
+            opacity: { duration: 0.8, delay: 0.6 },
+            scale: { duration: 0.8, delay: 0.6 },
+            y: { duration: 7, repeat: Infinity, ease: 'easeInOut', delay },
+            rotate: { duration: 9, repeat: Infinity, ease: 'easeInOut', delay },
+          }}
+        >
+          <Icon size={size} />
+        </motion.div>
+      ))}
+
       <motion.div
         variants={container}
         initial="hidden"
@@ -406,8 +498,20 @@ export default function TrackOrder() {
         <motion.h1
           variants={item}
           className="mt-8 bg-gradient-to-r from-brand-dark via-brand to-brand-light bg-clip-text pb-1 text-4xl font-extrabold tracking-tight text-transparent md:text-6xl"
+          style={{ backgroundSize: '200% auto' }}
         >
-          Track your order
+          <motion.span
+            className="inline-block bg-gradient-to-r from-brand-dark via-brand to-brand-light bg-clip-text text-transparent"
+            style={{ backgroundSize: '200% auto' }}
+            animate={
+              reduce
+                ? undefined
+                : { backgroundPosition: ['0% center', '200% center'] }
+            }
+            transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
+          >
+            Track your order
+          </motion.span>
         </motion.h1>
 
         <motion.p
@@ -419,12 +523,23 @@ export default function TrackOrder() {
 
         <motion.div
           variants={item}
-          className="mt-10 rounded-3xl bg-gradient-to-br from-brand/40 via-white to-brand-light/40 p-px shadow-2xl shadow-brand/10"
+          className="mt-10 rounded-3xl bg-gradient-to-br from-brand/40 via-white to-brand-light/40 p-px shadow-2xl shadow-brand/15 transition-shadow duration-500 hover:shadow-brand/25"
         >
-          <div className="rounded-[calc(1.5rem-1px)] bg-white/90 p-6 text-left backdrop-blur-xl md:p-8">
+          <SpotlightCard
+            reduce={reduce}
+            className="rounded-[calc(1.5rem-1px)] bg-white/90 p-6 text-left backdrop-blur-xl md:p-8"
+          >
             {loading ? (
-              <div className="py-8 text-center">
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand/10 text-brand">
+              <div className="py-8 text-center" role="status">
+                <div className="relative mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand/10 text-brand">
+                  {!reduce && (
+                    <motion.span
+                      aria-hidden
+                      className="absolute inset-0 rounded-2xl border border-brand/40"
+                      animate={{ scale: [1, 1.8], opacity: [0.6, 0] }}
+                      transition={{ duration: 1.6, repeat: Infinity, ease: 'easeOut' }}
+                    />
+                  )}
                   <RefreshCw size={26} className="animate-spin" />
                 </div>
                 <h2 className="mt-5 text-lg font-bold text-slate-800">
@@ -433,6 +548,15 @@ export default function TrackOrder() {
                 <p className="mt-2 text-sm text-slate-500">
                   Please wait while we securely retrieve your order details.
                 </p>
+                <div className="mx-auto mt-6 h-1.5 w-48 overflow-hidden rounded-full bg-slate-100">
+                  {!reduce && (
+                    <motion.div
+                      className="h-full w-1/3 rounded-full bg-gradient-to-r from-brand to-brand-light"
+                      animate={{ x: ['-100%', '300%'] }}
+                      transition={{ duration: 1.3, repeat: Infinity, ease: 'easeInOut' }}
+                    />
+                  )}
+                </div>
               </div>
 
 
@@ -448,7 +572,7 @@ export default function TrackOrder() {
                     onChange={(event) => setLookupOrderId(event.target.value)}
                     placeholder="e.g. STQ-A1B2C3D4"
                     required
-                    className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+                    className={inputCls}
                   />
                 </div>
 
@@ -462,23 +586,39 @@ export default function TrackOrder() {
                     onChange={(event) => setLookupPhone(event.target.value)}
                     placeholder="Enter your checkout phone number"
                     required
-                    className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+                    className={inputCls}
                   />
                 </div>
 
                 {error && (
-                  <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600">
+                  <motion.p
+                    role="alert"
+                    initial={{ opacity: 0, x: -8 }}
+                    animate={
+                      reduce
+                        ? { opacity: 1 }
+                        : { opacity: 1, x: [0, -6, 6, -4, 4, 0] }
+                    }
+                    transition={{ duration: 0.5 }}
+                    className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-600"
+                  >
                     {error}
-                  </p>
+                  </motion.p>
                 )}
 
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-brand to-brand-light px-6 py-3 font-semibold text-white shadow-lg transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="group/btn relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-brand to-brand-light px-6 py-3.5 font-semibold text-white shadow-lg shadow-brand/30 transition duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-brand/40 active:translate-y-0 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand/30 disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  <PackageSearch size={18} />
-                  {loading ? 'Verifying order...' : 'Find My Order'}
+                  <span
+                    aria-hidden
+                    className="absolute inset-y-0 -left-1/3 w-1/4 -skew-x-12 bg-white/30 blur-sm transition-all duration-700 group-hover/btn:left-[130%]"
+                  />
+                  <PackageSearch size={18} className="relative" />
+                  <span className="relative">
+                    {loading ? 'Verifying order...' : 'Find My Order'}
+                  </span>
                 </button>
               </form>
 
@@ -503,7 +643,7 @@ export default function TrackOrder() {
                   <button
                     type="button"
                     onClick={handleRetry}
-                    className="mt-6 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-brand to-brand-light px-6 py-3 font-semibold text-white shadow-lg shadow-brand/20 transition hover:-translate-y-0.5"
+                    className="mt-6 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-brand to-brand-light px-6 py-3 font-semibold text-white shadow-lg shadow-brand/20 transition hover:-translate-y-0.5 hover:shadow-xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand/30"
                   >
                     <RefreshCw size={17} />
                     Try again
@@ -512,19 +652,29 @@ export default function TrackOrder() {
               </div>
             ) : (
               <div className="flex items-center gap-3 rounded-xl border border-green-100 bg-green-50 px-4 py-3 text-sm font-medium text-green-700">
-                <ShieldCheck size={20} />
+                <motion.span
+                  initial={reduce ? false : { scale: 0, rotate: -90 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ type: 'spring', stiffness: 260, damping: 14 }}
+                  className="flex"
+                >
+                  <ShieldCheck size={20} />
+                </motion.span>
                 Your order has been securely verified.
               </div>
             )}
-          </div>
+          </SpotlightCard>
         </motion.div>
 
         <motion.ul
           variants={item}
-          className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-slate-500"
+          className="mt-6 flex flex-wrap items-center justify-center gap-2.5 text-sm text-slate-600"
         >
           {TRUST.map(({ icon: Icon, text }) => (
-            <li key={text} className="flex items-center gap-2">
+            <li
+              key={text}
+              className="flex items-center gap-2 rounded-full border border-brand/10 bg-white/70 px-3.5 py-1.5 shadow-sm backdrop-blur transition hover:-translate-y-0.5 hover:border-brand/30 hover:shadow-md"
+            >
               <Icon size={16} className="text-brand" />
               {text}
             </li>
@@ -540,10 +690,26 @@ export default function TrackOrder() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.5, ease: EASE }}
               aria-live="polite"
-              className="mt-10 overflow-hidden rounded-3xl border border-brand/15 bg-white text-left shadow-2xl shadow-brand/10"
+              className="mt-10 overflow-hidden rounded-3xl border border-brand/15 bg-white text-left shadow-2xl shadow-brand/15"
             >
-              <div className="flex flex-wrap items-center justify-between gap-3 bg-gradient-to-r from-brand-dark to-brand px-6 py-5 text-white">
-                <div className="flex items-center gap-3">
+              <div className="relative flex flex-wrap items-center justify-between gap-3 overflow-hidden bg-gradient-to-r from-brand-dark to-brand px-6 py-5 text-white">
+                {!reduce && (
+                  <motion.span
+                    aria-hidden
+                    className="pointer-events-none absolute inset-y-0 w-1/4 -skew-x-12 bg-gradient-to-r from-transparent via-white/25 to-transparent"
+                    initial={{ left: '-30%' }}
+                    animate={{ left: '130%' }}
+                    transition={{
+                      duration: 2.2,
+                      delay: 0.6,
+                      repeat: Infinity,
+                      repeatDelay: 3.5,
+                      ease: 'easeInOut',
+                    }}
+                  />
+                )}
+
+                <div className="relative flex items-center gap-3">
                   <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 backdrop-blur">
                     <PackageSearch size={20} />
                   </span>
@@ -558,7 +724,13 @@ export default function TrackOrder() {
                   </div>
                 </div>
 
-                <span className="rounded-full bg-white/15 px-3 py-1.5 text-sm font-semibold backdrop-blur">
+                <span className="relative inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1.5 text-sm font-semibold backdrop-blur">
+                  <span className="relative flex h-2 w-2">
+                    {!reduce && result.status !== 'Cancelled' && (
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white/70" />
+                    )}
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
+                  </span>
                   {result.status}
                 </span>
               </div>
@@ -572,11 +744,11 @@ export default function TrackOrder() {
                   </p>
                 )}
 
-                <p className="mt-8 rounded-xl bg-slate-50 px-4 py-3 text-sm leading-relaxed text-slate-600">
+                <p className="mt-8 rounded-xl border-l-4 border-brand bg-slate-50 px-4 py-3 text-sm leading-relaxed text-slate-600">
                   {result.message}
                 </p>
 
-                <div className="mt-6 grid gap-3 rounded-xl border border-slate-100 p-4 text-sm sm:grid-cols-2">
+                <div className="mt-6 grid gap-3 rounded-xl border border-slate-100 bg-gradient-to-br from-white to-blue-50/40 p-4 text-sm sm:grid-cols-2">
                   <div>
                     <span className="text-slate-400">Customer</span>
                     <p className="font-semibold text-slate-800">
@@ -605,7 +777,7 @@ export default function TrackOrder() {
 
                   <div>
                     <span className="text-slate-400">Order total</span>
-                    <p className="font-semibold text-slate-800">
+                    <p className="bg-gradient-to-r from-brand-dark to-brand bg-clip-text font-bold text-transparent">
                       {formatPrice(result.total)}
                     </p>
                   </div>
@@ -617,15 +789,18 @@ export default function TrackOrder() {
 
                 <div className="mt-3 space-y-3">
                   {(result.items || []).map((product, index) => (
-                    <div
+                    <motion.div
                       key={`${product.id}-${index}`}
-                      className="flex items-center gap-3 rounded-xl bg-slate-50 p-3"
+                      initial={{ opacity: 0, x: -16 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.5 + index * 0.1, duration: 0.5, ease: EASE }}
+                      className="flex items-center gap-3 rounded-xl border border-transparent bg-slate-50 p-3 transition duration-300 hover:-translate-y-0.5 hover:border-brand/20 hover:bg-white hover:shadow-lg hover:shadow-brand/10"
                     >
                       {product.image && (
                         <img
                           src={product.image}
                           alt={product.name}
-                          className="h-14 w-14 rounded-lg bg-white object-contain"
+                          className="h-14 w-14 rounded-lg bg-white object-contain shadow-sm"
                         />
                       )}
 
@@ -644,7 +819,7 @@ export default function TrackOrder() {
                           Number(product.quantity || 0)
                         )}
                       </strong>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
               </div>
@@ -655,10 +830,14 @@ export default function TrackOrder() {
         <motion.div variants={item} className="mt-12">
           <Link
             to="/"
-            className="inline-flex items-center gap-2 rounded-full bg-brand px-8 py-3 font-semibold !text-white shadow-lg shadow-brand/30 transition hover:-translate-y-0.5 hover:bg-brand-light hover:shadow-xl hover:shadow-brand/40 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand/30"
+            className="group/cta relative inline-flex items-center gap-2 overflow-hidden rounded-full bg-brand px-8 py-3 font-semibold !text-white shadow-lg shadow-brand/30 transition hover:-translate-y-0.5 hover:bg-brand-light hover:shadow-xl hover:shadow-brand/40 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand/30"
           >
-            <ShoppingBag size={18} />
-            Continue shopping
+            <span
+              aria-hidden
+              className="absolute inset-y-0 -left-1/3 w-1/4 -skew-x-12 bg-white/30 blur-sm transition-all duration-700 group-hover/cta:left-[130%]"
+            />
+            <ShoppingBag size={18} className="relative transition-transform duration-300 group-hover/cta:-rotate-12 group-hover/cta:scale-110" />
+            <span className="relative">Continue shopping</span>
           </Link>
         </motion.div>
       </motion.div>

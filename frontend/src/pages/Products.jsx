@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
@@ -12,9 +11,10 @@ import {
   FiPackage,
   FiChevronDown,
   FiTrash2,
+  FiArrowUpRight,
 } from "react-icons/fi";
 
-import { Sparkles } from "lucide-react";
+import { Sparkles, Laptop, Cpu, Keyboard, Headphones } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import "../styles/product.css";
 
@@ -143,7 +143,7 @@ function ProductCard({
         <div className="pcard__badges">
           {product.featured && (
             <span className="badge badge--featured">
-              <Sparkles size={11} /> Featured
+              <Sparkles size={12} /> Featured
             </span>
           )}
 
@@ -163,12 +163,22 @@ function ProductCard({
           }
           onClick={handleWishlist}
         >
-          <FiHeart size={16} />
+          <FiHeart size={17} />
         </button>
 
         {outOfStock && (
           <span className="pcard__soldout">Out of stock</span>
         )}
+
+        {/* Hover par neeche se upar aane wala shortcut (same product link) */}
+        <Link
+          to={`/product/${product.id}`}
+          className="pcard__quick"
+          tabIndex={-1}
+          aria-hidden="true"
+        >
+          View details <FiArrowUpRight size={16} />
+        </Link>
       </div>
 
       <div className="pcard__body">
@@ -645,8 +655,46 @@ export default function Products() {
   return (
     <section className="products">
       <header className="products__head">
+        {/* Decorative showcase tiles (sirf sajawat) */}
+        <div className="showcase" aria-hidden="true">
+          <div className="showcase__tile">
+            <span className="showcase__icon">
+              <Laptop size={28} strokeWidth={1.8} />
+            </span>
+            <strong>Laptops</strong>
+          </div>
+
+          <div className="showcase__tile">
+            <span className="showcase__icon">
+              <Cpu size={28} strokeWidth={1.8} />
+            </span>
+            <strong>Components</strong>
+          </div>
+
+          <div className="showcase__tile">
+            <span className="showcase__icon">
+              <Keyboard size={28} strokeWidth={1.8} />
+            </span>
+            <strong>Peripherals</strong>
+          </div>
+
+          <div className="showcase__tile">
+            <span className="showcase__icon">
+              <Headphones size={28} strokeWidth={1.8} />
+            </span>
+            <strong>Accessories</strong>
+          </div>
+        </div>
+
         <div className="products__head-inner">
-          <h1>Our Tech Collection</h1>
+          <span className="products__badge">
+            <i aria-hidden="true" />
+            Smartteq store
+          </span>
+
+          <h1>
+            Our <span>Tech Collection</span>
+          </h1>
 
           <p>
             Explore the latest in laptops, peripherals, and more.
@@ -654,16 +702,19 @@ export default function Products() {
 
           <ul className="stats">
             <li>
-              <strong>{stats.total}</strong> products
+              <strong>{stats.total}</strong>
+              <span>products</span>
             </li>
 
             <li>
-              <strong>{stats.inStock}</strong> in stock
+              <strong>{stats.inStock}</strong>
+              <span>in stock</span>
             </li>
 
             {stats.maxOff > 0 && (
               <li>
-                Up to <strong>{stats.maxOff}%</strong> off
+                <strong>{stats.maxOff}%</strong>
+                <span>max discount</span>
               </li>
             )}
           </ul>
@@ -778,16 +829,29 @@ export default function Products() {
         </p>
 
         {loading ? (
-          <div className="empty">
-            <span className="empty__icon">
-              <FiPackage size={24} />
+          <div
+            className="products__grid"
+            role="status"
+            aria-busy="true"
+          >
+            <span className="sr-only">
+              Loading products... Getting the latest products from
+              Smartteq database.
             </span>
 
-            <h2>Loading products...</h2>
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div className="pcard-skel" key={i} aria-hidden="true">
+                <div className="pcard-skel__media" />
 
-            <p>
-              Getting the latest products from Smartteq database.
-            </p>
+                <div className="pcard-skel__body">
+                  <span className="pcard-skel__line pcard-skel__line--chip" />
+                  <span className="pcard-skel__line" />
+                  <span className="pcard-skel__line pcard-skel__line--short" />
+                  <span className="pcard-skel__line pcard-skel__line--price" />
+                  <span className="pcard-skel__btn" />
+                </div>
+              </div>
+            ))}
           </div>
         ) : error ? (
           <div className="empty">

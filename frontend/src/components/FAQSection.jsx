@@ -1,6 +1,11 @@
 import { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, MessageCircle, Phone } from "lucide-react";
 import "../styles/FAQSection.css";
+
+// Yahan se number badlein (country code ke saath, bina + ya space ke)
+const WHATSAPP_NUMBER = "923215003621";
+const PHONE_DISPLAY = "0321-5003621";
+const PHONE_LINK = "tel:+923215003621";
 
 const faqItems = [
     {
@@ -34,64 +39,120 @@ const faqItems = [
 export default function FAQSection() {
     const [openIndex, setOpenIndex] = useState(0);
 
+    const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+        "Hi, I have a question about your services."
+    )}`;
+
     return (
         <section className="faq-section" id="faq">
-            <div className="faq-heading">
-                <h2>Frequently Asked Questions</h2>
+            <div className="faq-layout">
+                {/* Left: heading + help card */}
+                <div className="faq-intro">
+                    <span className="faq-badge">
+                        <i aria-hidden="true" />
+                        Help centre
+                    </span>
 
-                <p>Find answers to common questions about our services.</p>
+                    <h2>
+                        Frequently asked <span>questions</span>
+                    </h2>
 
-                <span className="faq-heading-accent" aria-hidden="true" />
-            </div>
+                    <p className="faq-intro-text">
+                        Find answers to common questions about our services.
+                    </p>
 
-            <div className="faq-list">
-                {faqItems.map((item, index) => {
-                    const isOpen = openIndex === index;
-                    const answerId = `faq-answer-${index}`;
-                    const questionId = `faq-question-${index}`;
+                    <div className="faq-help">
+                        <h3>Still have a question?</h3>
 
-                    return (
-                        <article
-                            className={`faq-item ${isOpen ? "faq-item-open" : ""}`}
-                            key={item.question}
-                        >
-                            <button
-                                className="faq-question"
-                                type="button"
-                                id={questionId}
-                                onClick={() =>
-                                    setOpenIndex(isOpen ? null : index)
-                                }
-                                aria-expanded={isOpen}
-                                aria-controls={answerId}
+                        <p>
+                            Our team replies quickly. Ask about your device
+                            and we will guide you.
+                        </p>
+
+                        <div className="faq-help-actions">
+                            <a
+                                className="faq-help-btn faq-help-primary"
+                                href={whatsappLink}
+                                target="_blank"
+                                rel="noreferrer"
                             >
-                                <span>{item.question}</span>
-
-                                <ChevronDown
-                                    className={`faq-chevron ${isOpen ? "faq-chevron-open" : ""
-                                        }`}
-                                    size={22}
+                                <MessageCircle
+                                    size={18}
                                     strokeWidth={2.2}
                                     aria-hidden="true"
                                 />
-                            </button>
+                                Chat on WhatsApp
+                            </a>
 
-                            {/* Band answer CSS (visibility) se chhupta hai,
-                                is liye inert / aria-hidden ki zaroorat nahi */}
-                            <div
-                                className={`faq-answer-wrapper ${isOpen ? "answer-open" : ""
-                                    }`}
-                                id={answerId}
-                                role="region"
-                                aria-labelledby={questionId}
+                            <a
+                                className="faq-help-btn faq-help-secondary"
+                                href={PHONE_LINK}
                             >
-                                <div className="faq-answer-inner">
-                                    <p className="faq-answer">{item.answer}</p>
+                                <Phone
+                                    size={18}
+                                    strokeWidth={2.2}
+                                    aria-hidden="true"
+                                />
+                                {PHONE_DISPLAY}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Right: accordion */}
+                <div className="faq-list">
+                    {faqItems.map((item, index) => {
+                        const isOpen = openIndex === index;
+                        const answerId = `faq-answer-${index}`;
+                        const questionId = `faq-question-${index}`;
+
+                        return (
+                            <article
+                                className={`faq-item ${isOpen ? "faq-item-open" : ""}`}
+                                key={item.question}
+                            >
+                                <button
+                                    className="faq-question"
+                                    type="button"
+                                    id={questionId}
+                                    onClick={() =>
+                                        setOpenIndex(isOpen ? null : index)
+                                    }
+                                    aria-expanded={isOpen}
+                                    aria-controls={answerId}
+                                >
+                                    <span>{item.question}</span>
+
+                                    <span className="faq-chevron-wrap">
+                                        <ChevronDown
+                                            className={`faq-chevron ${isOpen ? "faq-chevron-open" : ""
+                                                }`}
+                                            size={20}
+                                            strokeWidth={2.4}
+                                            aria-hidden="true"
+                                        />
+                                    </span>
+                                </button>
+
+                                {/* Band answer CSS (visibility) se chhupta hai,
+                                    is liye inert / aria-hidden ki zaroorat nahi */}
+                                <div
+                                    className={`faq-answer-wrapper ${isOpen ? "answer-open" : ""
+                                        }`}
+                                    id={answerId}
+                                    role="region"
+                                    aria-labelledby={questionId}
+                                >
+                                    <div className="faq-answer-inner">
+                                        <p className="faq-answer">
+                                            {item.answer}
+                                        </p>
+                                    </div>
                                 </div>
-                            </div>
-                        </article>
-                    );
-                })}
+                            </article>
+                        );
+                    })}
+                </div>
             </div>
         </section>
     );
